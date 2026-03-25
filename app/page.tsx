@@ -1,65 +1,116 @@
-import Image from "next/image";
+import Link from 'next/link';
+import { Zap, Users, Trophy, ArrowRight, ChevronRight } from 'lucide-react';
+import { getHackathons } from '@/lib/data';
+import Badge from '@/components/common/Badge';
+import Card from '@/components/common/Card';
 
-export default function Home() {
+const QUICK_MENUS = [
+  {
+    href: '/hackathons',
+    icon: Zap,
+    label: '해커톤 탐색',
+    desc: '진행중·예정·종료 해커톤 전체 보기',
+    color: 'text-violet-600 bg-violet-50',
+  },
+  {
+    href: '/camp',
+    icon: Users,
+    label: '팀원 모집',
+    desc: '포지션별 팀을 찾거나 모집글 올리기',
+    color: 'text-blue-600 bg-blue-50',
+  },
+  {
+    href: '/rankings',
+    icon: Trophy,
+    label: '글로벌 랭킹',
+    desc: '포인트 기반 참가자 순위 확인',
+    color: 'text-amber-600 bg-amber-50',
+  },
+];
+
+export default function HomePage() {
+  const hackathons = getHackathons();
+  const popular = hackathons.filter((h) => h.status !== 'ended').slice(0, 3);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="mx-auto max-w-6xl px-4 py-10">
+      {/* 히어로 */}
+      <section className="text-center py-12">
+        <div className="inline-flex items-center gap-2 rounded-full bg-violet-50 px-4 py-1.5 text-sm font-medium text-violet-700 mb-6">
+          <Zap className="h-4 w-4" />
+          해커톤 통합 성장 플랫폼
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+        <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4 leading-tight">
+          해커톤, 단순한 참여를<br className="hidden sm:block" /> 넘어
+          <span className="text-violet-600"> 당신의 성장</span>이<br className="hidden sm:block" /> 기록되는 곳
+        </h1>
+        <p className="text-gray-500 text-lg max-w-xl mx-auto mb-8">
+          팀을 구성하고, 결과를 제출하고, 경험 증명서로 커리어를 쌓으세요.
+        </p>
+        <Link
+          href="/hackathons"
+          className="inline-flex items-center gap-2 rounded-xl bg-violet-600 px-6 py-3 text-white font-semibold hover:bg-violet-700 transition-colors"
+        >
+          해커톤 둘러보기 <ArrowRight className="h-4 w-4" />
+        </Link>
+      </section>
+
+      {/* 퀵 메뉴 */}
+      <section className="grid sm:grid-cols-3 gap-4 mb-12">
+        {QUICK_MENUS.map(({ href, icon: Icon, label, desc, color }) => (
+          <Link key={href} href={href}>
+            <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
+              <div className={`inline-flex rounded-lg p-2.5 mb-3 ${color}`}>
+                <Icon className="h-5 w-5" />
+              </div>
+              <p className="font-semibold text-gray-900 mb-1">{label}</p>
+              <p className="text-sm text-gray-500">{desc}</p>
+            </Card>
+          </Link>
+        ))}
+      </section>
+
+      {/* 인기 해커톤 */}
+      <section>
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-xl font-bold text-gray-900">주목할 해커톤</h2>
+          <Link
+            href="/hackathons"
+            className="flex items-center gap-1 text-sm text-violet-600 hover:text-violet-700 font-medium"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            전체 보기 <ChevronRight className="h-4 w-4" />
+          </Link>
         </div>
-      </main>
+
+        {popular.length === 0 ? (
+          <Card>
+            <p className="text-center text-gray-500 py-8">현재 진행 중인 해커톤이 없습니다.</p>
+          </Card>
+        ) : (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {popular.map((h) => (
+              <Link key={h.slug} href={`/hackathons/${h.slug}`}>
+                <Card padding="none" className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer">
+                  <div className="h-32 bg-gradient-to-br from-violet-100 to-blue-100 flex items-center justify-center">
+                    <Zap className="h-10 w-10 text-violet-300" />
+                  </div>
+                  <div className="p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Badge variant="status" status={h.status} />
+                    </div>
+                    <h3 className="font-semibold text-gray-900 text-sm line-clamp-2 mb-2">{h.title}</h3>
+                    <div className="flex flex-wrap gap-1">
+                      {h.tags.slice(0, 3).map((tag) => (
+                        <Badge key={tag} variant="tag">{tag}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        )}
+      </section>
     </div>
   );
 }

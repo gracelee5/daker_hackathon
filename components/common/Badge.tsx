@@ -1,7 +1,7 @@
 import { HackathonStatus } from '@/types';
 
 interface BadgeProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   variant?: 'default' | 'status' | 'tag';
   status?: HackathonStatus;
   className?: string;
