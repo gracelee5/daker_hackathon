@@ -204,7 +204,7 @@ function CampContent() {
 
       {createOpen && (
         <CreateTeamModal
-          hackathons={hackathons}
+          hackathons={hackathons.filter((h) => h.status !== 'ended')}
           onClose={() => setCreateOpen(false)}
           onCreated={(team) => setLocalTeams((prev) => [team, ...prev])}
         />
