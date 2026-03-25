@@ -11,6 +11,8 @@ const TYPE_ICON: Record<Notification['type'], React.ReactNode> = {
   join_request: <Users className="h-5 w-5 text-violet-500" />,
   request_accepted: <CheckCircle className="h-5 w-5 text-emerald-500" />,
   request_rejected: <XCircle className="h-5 w-5 text-red-400" />,
+  hackathon_registered: <CheckCircle className="h-5 w-5 text-blue-500" />,
+  submission_complete: <CheckCircle className="h-5 w-5 text-violet-500" />,
 };
 
 export default function NotificationsPage() {

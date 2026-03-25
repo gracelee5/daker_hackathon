@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Zap, Eye, EyeOff } from 'lucide-react';
 import { storage } from '@/lib/storage';
+import { useAuthStore } from '@/store/authStore';
 import { AuthUser } from '@/types';
 import Button from '@/components/common/Button';
 
@@ -12,6 +13,7 @@ const POSITIONS = ['Frontend', 'Backend', 'Designer', 'PM', 'ML Engineer', 'DevO
 
 export default function SignupPage() {
   const router = useRouter();
+  const login = useAuthStore((s) => s.login);
   const [step, setStep] = useState<1 | 2>(1);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -51,7 +53,7 @@ export default function SignupPage() {
       createdAt: new Date().toISOString(),
     };
     storage.registerUser(user);
-    storage.setCurrentUser({
+    login({
       id: user.id,
       nickname: user.nickname,
       bio: user.bio,

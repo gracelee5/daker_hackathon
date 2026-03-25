@@ -8,6 +8,8 @@ import type {
   UserProfile,
   AuthUser,
   Notification,
+  TeamMember,
+  ChatMessage,
 } from '@/types';
 
 type StorageKey = keyof LocalStorageSchema;
@@ -195,5 +197,56 @@ export const storage = {
     if (idx >= 0) list[idx] = p;
     else list.push(p);
     setItem('syncup:participations', list);
+  },
+
+  markParticipationSubmitted: (hackathonSlug: string): void => {
+    const list = storage.getParticipations();
+    const idx = list.findIndex((p) => p.hackathonSlug === hackathonSlug);
+    if (idx >= 0) {
+      list[idx].submitted = true;
+      list[idx].submittedAt = new Date().toISOString();
+      setItem('syncup:participations', list);
+    }
+  },
+
+  // ─── 팀 멤버 ──────────────────────────────────────────────────────────────
+  getTeamMembers: (teamCode?: string): TeamMember[] => {
+    const all = getItem('syncup:teamMembers') ?? [];
+    return teamCode ? all.filter((m) => m.teamCode === teamCode) : all;
+  },
+
+  addTeamMember: (member: TeamMember): void => {
+    const all = getItem('syncup:teamMembers') ?? [];
+    const exists = all.some((m) => m.teamCode === member.teamCode && m.userId === member.userId);
+    if (!exists) {
+      all.push(member);
+      setItem('syncup:teamMembers', all);
+    }
+  },
+
+  updateTeamMemberRole: (teamCode: string, userId: string, role: string): void => {
+    const all = getItem('syncup:teamMembers') ?? [];
+    const idx = all.findIndex((m) => m.teamCode === teamCode && m.userId === userId);
+    if (idx >= 0) {
+      all[idx].role = role;
+      setItem('syncup:teamMembers', all);
+    }
+  },
+
+  removeTeamMember: (teamCode: string, userId: string): void => {
+    const all = (getItem('syncup:teamMembers') ?? []).filter(
+      (m) => !(m.teamCode === teamCode && m.userId === userId)
+    );
+    setItem('syncup:teamMembers', all);
+  },
+
+  // ─── 채팅 ─────────────────────────────────────────────────────────────────
+  getChats: (teamCode: string): ChatMessage[] =>
+    (getItem('syncup:chats') ?? []).filter((c) => c.teamCode === teamCode),
+
+  addChat: (msg: ChatMessage): void => {
+    const all = getItem('syncup:chats') ?? [];
+    all.push(msg);
+    setItem('syncup:chats', all);
   },
 };

@@ -217,6 +217,8 @@ export interface HackathonParticipation {
   teamName: string;
   role: Position;
   status: HackathonStatus;
+  submitted?: boolean;
+  submittedAt?: string;
   result?: {
     rank: number;
     score: number;
@@ -228,7 +230,7 @@ export interface HackathonParticipation {
 export interface Notification {
   id: string;
   userId: string;
-  type: 'join_request' | 'request_accepted' | 'request_rejected';
+  type: 'join_request' | 'request_accepted' | 'request_rejected' | 'hackathon_registered' | 'submission_complete';
   title: string;
   message: string;
   read: boolean;
@@ -238,7 +240,26 @@ export interface Notification {
     teamName?: string;
     requestId?: string;
     hackathonSlug?: string;
+    hackathonTitle?: string;
   };
+}
+
+export interface ChatMessage {
+  id: string;
+  teamCode: string;
+  userId: string;
+  userNickname: string;
+  content: string;
+  createdAt: string;
+}
+
+export interface TeamMember {
+  teamCode: string;
+  userId: string;
+  nickname: string;
+  role: Position;
+  joinedAt: string;
+  isLeader: boolean;
 }
 
 export interface AuthUser {
@@ -263,4 +284,6 @@ export interface LocalStorageSchema {
   'syncup:certificates': ActivityCertificate[];
   'syncup:participations': HackathonParticipation[];
   'syncup:notifications': Notification[];
+  'syncup:teamMembers': TeamMember[];
+  'syncup:chats': ChatMessage[];
 }

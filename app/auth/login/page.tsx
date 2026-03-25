@@ -5,10 +5,12 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Zap, Eye, EyeOff } from 'lucide-react';
 import { storage } from '@/lib/storage';
+import { useAuthStore } from '@/store/authStore';
 import Button from '@/components/common/Button';
 
 export default function LoginPage() {
   const router = useRouter();
+  const login = useAuthStore((s) => s.login);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPw, setShowPw] = useState(false);
@@ -27,7 +29,7 @@ export default function LoginPage() {
       return;
     }
 
-    storage.setCurrentUser({
+    login({
       id: user.id,
       nickname: user.nickname,
       bio: user.bio,

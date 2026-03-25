@@ -3,6 +3,7 @@ import { Geist } from 'next/font/google';
 import './globals.css';
 import GNB from '@/components/common/GNB';
 import Footer from '@/components/common/Footer';
+import StoreProvider from '@/components/common/StoreProvider';
 
 const geist = Geist({
   variable: '--font-geist',
@@ -20,9 +21,11 @@ export default function RootLayout({
   return (
     <html lang="ko" className={`${geist.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-gray-50 text-gray-900">
-        <GNB />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <StoreProvider>
+          <GNB />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </StoreProvider>
       </body>
     </html>
   );

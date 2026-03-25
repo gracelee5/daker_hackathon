@@ -12,7 +12,9 @@
       "Bash(npx next:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(cat /Users/gracelee/Desktop/daker/app/hackathons/[slug]/SubmitSection.tsx)",
+      "Bash(cat /Users/gracelee/Desktop/daker/app/hackathons/[slug]/page.tsx)"
     ]
   }
 }
