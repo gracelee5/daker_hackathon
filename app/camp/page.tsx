@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { Suspense } from 'react';
 import { Users, Plus, Settings } from 'lucide-react';
 import { getHackathons, getPublicTeams } from '@/lib/data';
@@ -19,6 +19,7 @@ const POSITIONS = ['Frontend', 'Backend', 'Designer', 'PM', 'ML Engineer', 'DevO
 
 function CampContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const hackathonFilter = searchParams.get('hackathon') ?? 'all';
 
   const hackathons = getHackathons();
@@ -128,25 +129,44 @@ function CampContent() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {filtered.map((team) => {
             const hackathon = hackathons.find((h) => h.slug === team.hackathonSlug);
-            const isMyTeam = currentUser && team.leaderId === currentUser.id;
-            const pendingCount = isMyTeam
-              ? storage.getJoinRequestsForTeam(team.teamCode).filter((r) => r.status === 'pending').length
-              : 0;
+            const isLeader = currentUser && team.leaderId === currentUser.id;
             const alreadyMember = currentUser
               ? storage.getTeamMembers(team.teamCode).some((m) => m.userId === currentUser.id)
               : false;
+            const isMyTeam = !!(isLeader || alreadyMember);
+            const pendingCount = isLeader
+              ? storage.getJoinRequestsForTeam(team.teamCode).filter((r) => r.status === 'pending').length
+              : 0;
             const hasPendingRequest = currentUser
               ? storage.getJoinRequests().some((r) => r.teamCode === team.teamCode && r.fromUserId === currentUser.id && r.status === 'pending')
               : false;
 
+            const handleCardClick = () => {
+              if (!currentUser) {
+                router.push('/auth/login');
+                return;
+              }
+              if (isMyTeam) {
+                router.push(`/teams/${team.teamCode}`);
+                return;
+              }
+              if (team.isOpen) setJoinTarget(team);
+            };
+
             return (
-              <Card key={team.teamCode} className="flex flex-col gap-3">
+              <Card
+                key={team.teamCode}
+                className="flex flex-col gap-3 cursor-pointer hover:shadow-md transition-all hover:-translate-y-0.5"
+                onClick={handleCardClick}
+              >
                 <div className="flex items-start justify-between">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <h3 className="font-semibold text-gray-900 truncate">{team.name}</h3>
                       {isMyTeam && (
-                        <span className="shrink-0 rounded-full bg-violet-100 px-2 py-0.5 text-xs text-violet-700 font-medium">내 팀</span>
+                        <span className="shrink-0 rounded-full bg-violet-100 px-2 py-0.5 text-xs text-violet-700 font-medium">
+                          {isLeader ? '내 팀' : '합류됨'}
+                        </span>
                       )}
                     </div>
                     <p className="text-xs text-gray-500 mt-0.5 truncate">{hackathon?.title ?? team.hackathonSlug}</p>
@@ -175,8 +195,8 @@ function CampContent() {
                   </div>
                 )}
 
-                <div className="flex gap-2 mt-auto">
-                  {isMyTeam ? (
+                <div className="flex gap-2 mt-auto" onClick={(e) => e.stopPropagation()}>
+                  {isLeader ? (
                     <Button
                       variant="secondary"
                       size="sm"
