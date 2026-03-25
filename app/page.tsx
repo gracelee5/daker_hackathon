@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Zap, Users, Trophy, ArrowRight, ChevronRight } from 'lucide-react';
 import { getHackathons } from '@/lib/data';
 import Badge from '@/components/common/Badge';
@@ -91,8 +92,14 @@ export default function HomePage() {
             {popular.map((h) => (
               <Link key={h.slug} href={`/hackathons/${h.slug}`}>
                 <Card padding="none" className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer">
-                  <div className="h-32 bg-gradient-to-br from-violet-100 to-blue-100 flex items-center justify-center">
-                    <Zap className="h-10 w-10 text-violet-300" />
+                  <div className="relative h-36 bg-gradient-to-br from-violet-100 to-blue-100">
+                    {h.thumbnailUrl ? (
+                      <Image src={h.thumbnailUrl} alt={h.title} fill className="object-cover" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" />
+                    ) : (
+                      <div className="flex h-full items-center justify-center">
+                        <Zap className="h-10 w-10 text-violet-300" />
+                      </div>
+                    )}
                   </div>
                   <div className="p-4">
                     <div className="flex items-center gap-2 mb-2">
