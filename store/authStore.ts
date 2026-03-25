@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { storage } from '@/lib/storage';
-import type { UserProfile, Notification, AuthUser, TeamMember } from '@/types';
+import type { UserProfile, Notification, AuthUser, TeamMember, HackathonParticipation, Submission } from '@/types';
 
 const DEMO_USERS: AuthUser[] = [
   { id: 'user-demo-1', email: 'demo1@syncup.com', password: 'demo1234', nickname: 'LightSpeed', bio: 'ML 모델 최적화 전문가입니다.', positions: ['Backend', 'ML Engineer'], techStack: ['Python', 'PyTorch'], totalPoints: 2400, createdAt: '2026-01-15T09:00:00+09:00' },
@@ -26,6 +26,86 @@ const DEMO_MEMBERS: TeamMember[] = [
   { teamCode: 'T-DESIGN-02', userId: 'user-demo-7', nickname: 'NoCodeNinja', role: 'PM', joinedAt: '2026-03-16T09:00:00+09:00', isLeader: true },
   { teamCode: 'T-DATA-01', userId: 'user-demo-8', nickname: 'DataViz', role: 'Backend', joinedAt: '2026-03-20T11:00:00+09:00', isLeader: true },
   { teamCode: 'T-MOBILE-01', userId: 'user-demo-9', nickname: 'A11yChamp', role: 'Frontend', joinedAt: '2026-03-25T10:00:00+09:00', isLeader: true },
+  // 신규 진행 중 해커톤 멤버
+  { teamCode: 'T-GENAI-01', userId: 'user-demo-1', nickname: 'LightSpeed', role: 'Backend', joinedAt: '2026-03-26T09:00:00+09:00', isLeader: true },
+  { teamCode: 'T-GENAI-01', userId: 'user-demo-2', nickname: 'PromptHero', role: 'Frontend', joinedAt: '2026-03-26T10:00:00+09:00', isLeader: false },
+  { teamCode: 'T-GENAI-01', userId: 'user-demo-9', nickname: 'A11yChamp', role: 'Frontend', joinedAt: '2026-03-26T11:00:00+09:00', isLeader: false },
+  { teamCode: 'T-GENAI-02', userId: 'user-demo-5', nickname: 'ContextMaster', role: 'PM', joinedAt: '2026-03-26T11:00:00+09:00', isLeader: true },
+  { teamCode: 'T-GENAI-02', userId: 'user-demo-6', nickname: 'PixelCraft', role: 'Designer', joinedAt: '2026-03-26T12:00:00+09:00', isLeader: false },
+  { teamCode: 'T-FULLSTACK-01', userId: 'user-demo-3', nickname: 'DevArchitect', role: 'Backend', joinedAt: '2026-03-27T10:00:00+09:00', isLeader: true },
+  { teamCode: 'T-FULLSTACK-01', userId: 'user-demo-4', nickname: 'CleanCoder', role: 'Backend', joinedAt: '2026-03-27T11:00:00+09:00', isLeader: false },
+  { teamCode: 'T-FULLSTACK-01', userId: 'user-demo-7', nickname: 'NoCodeNinja', role: 'PM', joinedAt: '2026-03-27T12:00:00+09:00', isLeader: false },
+  { teamCode: 'T-ML-01', userId: 'user-demo-8', nickname: 'DataViz', role: 'ML Engineer', joinedAt: '2026-03-21T11:00:00+09:00', isLeader: true },
+  { teamCode: 'T-ML-01', userId: 'user-demo-1', nickname: 'LightSpeed', role: 'ML Engineer', joinedAt: '2026-03-21T12:00:00+09:00', isLeader: false },
+  { teamCode: 'T-ML-02', userId: 'user-demo-4', nickname: 'CleanCoder', role: 'Backend', joinedAt: '2026-03-22T09:00:00+09:00', isLeader: true },
+  { teamCode: 'T-ML-02', userId: 'user-demo-9', nickname: 'A11yChamp', role: 'Frontend', joinedAt: '2026-03-22T10:00:00+09:00', isLeader: false },
+];
+
+const DEMO_PARTICIPATIONS: HackathonParticipation[] = [
+  {
+    hackathonSlug: 'genai-startup-sprint-2026-03',
+    hackathonTitle: 'GenAI 스타트업 스프린트: 아이디어를 제품으로',
+    teamCode: 'T-GENAI-01',
+    teamName: 'StartupSpark',
+    role: 'Backend',
+    status: 'ongoing',
+    submitted: false,
+    joinedAt: '2026-03-26T09:00:00+09:00',
+  },
+  {
+    hackathonSlug: 'genai-startup-sprint-2026-03',
+    hackathonTitle: 'GenAI 스타트업 스프린트: 아이디어를 제품으로',
+    teamCode: 'T-GENAI-02',
+    teamName: 'IdeaForge',
+    role: 'PM',
+    status: 'ongoing',
+    submitted: false,
+    joinedAt: '2026-03-26T11:00:00+09:00',
+  },
+  {
+    hackathonSlug: 'fullstack-challenge-2026-03',
+    hackathonTitle: '풀스택 마라톤: 72시간 서비스 배포 챌린지',
+    teamCode: 'T-FULLSTACK-01',
+    teamName: 'StackOverflow',
+    role: 'Backend',
+    status: 'ongoing',
+    submitted: false,
+    joinedAt: '2026-03-27T10:00:00+09:00',
+  },
+  {
+    hackathonSlug: 'data-ml-hackathon-2026-03',
+    hackathonTitle: '데이터·ML 해커톤: 실전 예측 모델 챌린지',
+    teamCode: 'T-ML-01',
+    teamName: 'GradientBoost',
+    role: 'ML Engineer',
+    status: 'ongoing',
+    submitted: true,
+    submittedAt: '2026-03-24T20:15:00+09:00',
+    joinedAt: '2026-03-21T11:00:00+09:00',
+  },
+  {
+    hackathonSlug: 'data-ml-hackathon-2026-03',
+    hackathonTitle: '데이터·ML 해커톤: 실전 예측 모델 챌린지',
+    teamCode: 'T-ML-02',
+    teamName: 'NeuralNomads',
+    role: 'Backend',
+    status: 'ongoing',
+    submitted: false,
+    joinedAt: '2026-03-22T09:00:00+09:00',
+  },
+];
+
+const DEMO_SUBMISSIONS: Submission[] = [
+  {
+    id: 'sub-ml-01',
+    hackathonSlug: 'data-ml-hackathon-2026-03',
+    teamCode: 'T-ML-01',
+    submittedAt: '2026-03-24T20:15:00+09:00',
+    artifacts: {
+      webUrl: 'https://github.com/example/gradient-boost',
+      pdfUrl: 'https://example.com/gradient-boost-solution.pdf',
+    },
+  },
 ];
 
 function seedDemoData() {
@@ -44,9 +124,27 @@ function seedDemoData() {
   localStorage.setItem('syncup:demo_seeded_v2', 'true');
 }
 
+function seedDemoDataV3() {
+  if (typeof window === 'undefined') return;
+  const seeded = localStorage.getItem('syncup:demo_seeded_v3');
+  if (seeded) return;
+
+  // 신규 팀 멤버 추가 (idempotent)
+  DEMO_MEMBERS.forEach((m) => storage.addTeamMember(m));
+
+  // 참여 이력 추가
+  DEMO_PARTICIPATIONS.forEach((p) => storage.saveParticipation(p));
+
+  // 제출 데이터 추가
+  DEMO_SUBMISSIONS.forEach((s) => storage.saveSubmission(s));
+
+  localStorage.setItem('syncup:demo_seeded_v3', 'true');
+}
+
 function ensureTestAccount() {
   if (typeof window === 'undefined') return;
   seedDemoData();
+  seedDemoDataV3();
   const existing = storage.findUserByEmail('test@syncup.com');
   if (!existing) {
     const testUser: AuthUser = {

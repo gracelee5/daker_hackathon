@@ -119,6 +119,57 @@
     }
   },
   {
+    "slug": "genai-startup-sprint-2026-03",
+    "title": "GenAI 스타트업 스프린트: 아이디어를 제품으로",
+    "status": "ongoing",
+    "tags": ["GenAI", "Startup", "Product", "LLM"],
+    "thumbnailUrl": "https://images.unsplash.com/photo-1655720828018-edd2daec9349?w=600&q=80",
+    "period": {
+      "timezone": "Asia/Seoul",
+      "submissionDeadlineAt": "2026-04-05T23:59:00+09:00",
+      "endAt": "2026-04-10T18:00:00+09:00"
+    },
+    "links": {
+      "detail": "/hackathons/genai-startup-sprint-2026-03",
+      "rules": "https://example.com/public/rules/genai-startup-2026",
+      "faq": "https://example.com/public/faq/genai-startup-2026"
+    }
+  },
+  {
+    "slug": "fullstack-challenge-2026-03",
+    "title": "풀스택 마라톤: 72시간 서비스 배포 챌린지",
+    "status": "ongoing",
+    "tags": ["Fullstack", "Web", "Node.js", "React"],
+    "thumbnailUrl": "https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=600&q=80",
+    "period": {
+      "timezone": "Asia/Seoul",
+      "submissionDeadlineAt": "2026-04-08T18:00:00+09:00",
+      "endAt": "2026-04-12T12:00:00+09:00"
+    },
+    "links": {
+      "detail": "/hackathons/fullstack-challenge-2026-03",
+      "rules": "https://example.com/public/rules/fullstack-2026",
+      "faq": "https://example.com/public/faq/fullstack-2026"
+    }
+  },
+  {
+    "slug": "data-ml-hackathon-2026-03",
+    "title": "데이터·ML 해커톤: 실전 예측 모델 챌린지",
+    "status": "ongoing",
+    "tags": ["ML", "Python", "Data", "Prediction"],
+    "thumbnailUrl": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80",
+    "period": {
+      "timezone": "Asia/Seoul",
+      "submissionDeadlineAt": "2026-04-03T23:59:00+09:00",
+      "endAt": "2026-04-07T18:00:00+09:00"
+    },
+    "links": {
+      "detail": "/hackathons/data-ml-hackathon-2026-03",
+      "rules": "https://example.com/public/rules/data-ml-2026",
+      "faq": "https://example.com/public/faq/data-ml-2026"
+    }
+  },
+  {
     "slug": "devops-infra-sprint-2025-11",
     "title": "DevOps & 인프라 최적화 스프린트",
     "status": "ended",

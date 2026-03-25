@@ -95,6 +95,65 @@
           "artifacts": { "webUrl": "https://github.com/example/k8s-wizards" }
         }
       ]
+    },
+    {
+      "hackathonSlug": "data-ml-hackathon-2026-03",
+      "updatedAt": "2026-03-25T12:00:00+09:00",
+      "entries": [
+        {
+          "rank": 1,
+          "teamName": "GradientBoost",
+          "score": 0.8734,
+          "submittedAt": "2026-03-24T20:15:00+09:00",
+          "artifacts": { "webUrl": "https://github.com/example/gradient-boost" }
+        },
+        {
+          "rank": 2,
+          "teamName": "NeuralNomads",
+          "score": 0.8512,
+          "submittedAt": "2026-03-25T09:30:00+09:00",
+          "artifacts": { "webUrl": "https://github.com/example/neural-nomads" }
+        },
+        {
+          "rank": 3,
+          "teamName": "DataDriven",
+          "score": 0.8290,
+          "submittedAt": "2026-03-23T18:45:00+09:00"
+        }
+      ]
+    },
+    {
+      "hackathonSlug": "genai-startup-sprint-2026-03",
+      "updatedAt": "2026-03-25T12:00:00+09:00",
+      "entries": [
+        {
+          "rank": 1,
+          "teamName": "StartupSpark",
+          "score": 88.0,
+          "submittedAt": "2026-03-25T11:00:00+09:00",
+          "scoreBreakdown": { "innovation": 90, "implementation": 85, "market": 88, "presentation": 89 }
+        },
+        {
+          "rank": 2,
+          "teamName": "IdeaForge",
+          "score": 82.5,
+          "submittedAt": "2026-03-25T10:30:00+09:00",
+          "scoreBreakdown": { "innovation": 85, "implementation": 80, "market": 83, "presentation": 82 }
+        }
+      ]
+    },
+    {
+      "hackathonSlug": "fullstack-challenge-2026-03",
+      "updatedAt": "2026-03-25T12:00:00+09:00",
+      "entries": [
+        {
+          "rank": 1,
+          "teamName": "StackOverflow",
+          "score": 91.0,
+          "submittedAt": "2026-03-25T08:00:00+09:00",
+          "scoreBreakdown": { "completion": 93, "code": 90, "ux": 90 }
+        }
+      ]
     }
   ]
 }

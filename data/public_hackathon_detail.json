@@ -454,6 +454,204 @@
       }
     },
     {
+      "slug": "genai-startup-sprint-2026-03",
+      "title": "GenAI 스타트업 스프린트: 아이디어를 제품으로",
+      "sections": {
+        "overview": {
+          "summary": "GenAI 기반의 스타트업 아이디어를 실제 프로토타입으로 구현합니다. LLM, 멀티모달 AI, AI 에이전트 등 다양한 GenAI 기술을 활용해 실질적인 문제를 해결하는 제품을 만들어 보세요.",
+          "teamPolicy": { "allowSolo": true, "maxTeamSize": 4 }
+        },
+        "info": {
+          "notice": [
+            "GenAI API 활용 시 심사자가 별도 키 없이 확인 가능한 형태로 제출하세요.",
+            "프로토타입은 외부에서 접속 가능한 URL로 배포되어야 합니다.",
+            "비즈니스 모델 발표 자료를 함께 제출해야 합니다."
+          ],
+          "links": {
+            "rules": "https://example.com/public/rules/genai-startup-2026",
+            "faq": "https://example.com/public/faq/genai-startup-2026"
+          }
+        },
+        "eval": {
+          "metricName": "FinalScore",
+          "description": "아이디어 혁신성, 구현 완성도, 시장성, 발표 품질을 종합 평가합니다.",
+          "scoreSource": "vote",
+          "scoreDisplay": {
+            "label": "심사 점수",
+            "breakdown": [
+              { "key": "innovation", "label": "혁신성", "weightPercent": 30 },
+              { "key": "implementation", "label": "구현도", "weightPercent": 30 },
+              { "key": "market", "label": "시장성", "weightPercent": 25 },
+              { "key": "presentation", "label": "발표", "weightPercent": 15 }
+            ]
+          }
+        },
+        "schedule": {
+          "timezone": "Asia/Seoul",
+          "milestones": [
+            { "name": "참가 신청 마감", "at": "2026-03-25T23:59:00+09:00" },
+            { "name": "해커톤 시작", "at": "2026-03-28T10:00:00+09:00" },
+            { "name": "중간 점검", "at": "2026-04-01T18:00:00+09:00" },
+            { "name": "최종 제출 마감", "at": "2026-04-05T23:59:00+09:00" },
+            { "name": "발표 및 심사", "at": "2026-04-08T14:00:00+09:00" },
+            { "name": "결과 발표", "at": "2026-04-10T18:00:00+09:00" }
+          ]
+        },
+        "prize": {
+          "items": [
+            { "place": "1st", "amountKRW": 3000000 },
+            { "place": "2nd", "amountKRW": 1500000 },
+            { "place": "3rd", "amountKRW": 700000 }
+          ]
+        },
+        "teams": { "campEnabled": true, "listUrl": "/camp?hackathon=genai-startup-sprint-2026-03" },
+        "submit": {
+          "allowedArtifactTypes": ["url", "pdf"],
+          "submissionUrl": "/hackathons/genai-startup-sprint-2026-03#submit",
+          "guide": [
+            "프로토타입 배포 URL과 발표 자료(PDF)를 제출합니다.",
+            "발표 자료에는 문제 정의, 솔루션, 비즈니스 모델을 포함해야 합니다."
+          ],
+          "submissionItems": [
+            { "key": "web", "title": "프로토타입 URL", "format": "url" },
+            { "key": "pdf", "title": "발표 자료 PDF", "format": "pdf_url" }
+          ]
+        },
+        "leaderboard": {
+          "publicLeaderboardUrl": "/hackathons/genai-startup-sprint-2026-03#leaderboard",
+          "note": "심사 완료 후 최종 점수가 공개됩니다."
+        }
+      }
+    },
+    {
+      "slug": "fullstack-challenge-2026-03",
+      "title": "풀스택 마라톤: 72시간 서비스 배포 챌린지",
+      "sections": {
+        "overview": {
+          "summary": "아이디어부터 배포까지 72시간 안에 완전한 풀스택 서비스를 만들어 배포합니다. 프론트엔드, 백엔드, 데이터베이스를 모두 포함한 완성된 제품을 목표로 합니다.",
+          "teamPolicy": { "allowSolo": false, "maxTeamSize": 5 }
+        },
+        "info": {
+          "notice": [
+            "솔로 참가는 불가하며, 2인 이상 팀으로 참가해야 합니다.",
+            "배포 URL은 심사 기간 동안 접근 가능해야 합니다.",
+            "프론트엔드와 백엔드 모두 구현되어야 합니다."
+          ],
+          "links": {
+            "rules": "https://example.com/public/rules/fullstack-2026",
+            "faq": "https://example.com/public/faq/fullstack-2026"
+          }
+        },
+        "eval": {
+          "metricName": "FinalScore",
+          "description": "완성도, 코드 품질, 사용자 경험, 배포 안정성을 종합 평가합니다.",
+          "scoreSource": "vote",
+          "scoreDisplay": {
+            "label": "심사 점수",
+            "breakdown": [
+              { "key": "completion", "label": "완성도", "weightPercent": 35 },
+              { "key": "code", "label": "코드 품질", "weightPercent": 30 },
+              { "key": "ux", "label": "사용자 경험", "weightPercent": 35 }
+            ]
+          }
+        },
+        "schedule": {
+          "timezone": "Asia/Seoul",
+          "milestones": [
+            { "name": "팀 등록 마감", "at": "2026-03-28T23:59:00+09:00" },
+            { "name": "해커톤 시작", "at": "2026-04-05T10:00:00+09:00" },
+            { "name": "제출 마감", "at": "2026-04-08T18:00:00+09:00" },
+            { "name": "심사 및 발표", "at": "2026-04-10T14:00:00+09:00" },
+            { "name": "결과 발표", "at": "2026-04-12T12:00:00+09:00" }
+          ]
+        },
+        "prize": {
+          "items": [
+            { "place": "1st", "amountKRW": 4000000 },
+            { "place": "2nd", "amountKRW": 2000000 },
+            { "place": "3rd", "amountKRW": 1000000 }
+          ]
+        },
+        "teams": { "campEnabled": true, "listUrl": "/camp?hackathon=fullstack-challenge-2026-03" },
+        "submit": {
+          "allowedArtifactTypes": ["url", "pdf"],
+          "submissionUrl": "/hackathons/fullstack-challenge-2026-03#submit",
+          "guide": [
+            "배포된 서비스 URL과 GitHub 레포지토리 URL을 제출합니다.",
+            "README에 실행 방법과 기술 스택을 명시해야 합니다."
+          ],
+          "submissionItems": [
+            { "key": "web", "title": "배포 URL", "format": "url" },
+            { "key": "pdf", "title": "발표 자료 PDF", "format": "pdf_url" }
+          ]
+        },
+        "leaderboard": {
+          "publicLeaderboardUrl": "/hackathons/fullstack-challenge-2026-03#leaderboard",
+          "note": "심사 완료 후 최종 점수가 공개됩니다."
+        }
+      }
+    },
+    {
+      "slug": "data-ml-hackathon-2026-03",
+      "title": "데이터·ML 해커톤: 실전 예측 모델 챌린지",
+      "sections": {
+        "overview": {
+          "summary": "실제 데이터셋을 기반으로 예측 모델을 개발하고 성능을 겨루는 ML 해커톤입니다. EDA부터 피처 엔지니어링, 모델 학습, 서빙까지 전 과정을 경험합니다.",
+          "teamPolicy": { "allowSolo": true, "maxTeamSize": 4 }
+        },
+        "info": {
+          "notice": [
+            "제공되는 데이터셋만 사용해야 합니다. 외부 데이터 사용 시 명시해야 합니다.",
+            "하루 최대 5회 제출 가능합니다.",
+            "최종 코드와 모델 파일을 함께 제출해야 합니다."
+          ],
+          "links": {
+            "rules": "https://example.com/public/rules/data-ml-2026",
+            "faq": "https://example.com/public/faq/data-ml-2026"
+          }
+        },
+        "eval": {
+          "metricName": "F1-Score",
+          "description": "F1-Score를 주요 지표로 하되, 추론 속도와 모델 크기도 보조 지표로 반영합니다.",
+          "limits": { "maxRuntimeSec": 600, "maxSubmissionsPerDay": 5 }
+        },
+        "schedule": {
+          "timezone": "Asia/Seoul",
+          "milestones": [
+            { "name": "참가 신청 및 데이터 다운로드 시작", "at": "2026-03-20T10:00:00+09:00" },
+            { "name": "리더보드 오픈", "at": "2026-03-22T10:00:00+09:00" },
+            { "name": "최종 제출 마감", "at": "2026-04-03T23:59:00+09:00" },
+            { "name": "결과 발표", "at": "2026-04-07T18:00:00+09:00" }
+          ]
+        },
+        "prize": {
+          "items": [
+            { "place": "1st", "amountKRW": 5000000 },
+            { "place": "2nd", "amountKRW": 2500000 },
+            { "place": "3rd", "amountKRW": 1000000 }
+          ]
+        },
+        "teams": { "campEnabled": true, "listUrl": "/camp?hackathon=data-ml-hackathon-2026-03" },
+        "submit": {
+          "allowedArtifactTypes": ["zip", "url"],
+          "submissionUrl": "/hackathons/data-ml-hackathon-2026-03#submit",
+          "guide": [
+            "코드, 모델, 예측 결과를 포함한 zip 파일을 제출합니다.",
+            "GitHub 레포지토리 URL을 함께 제출할 수 있습니다.",
+            "zip 파일은 200MB 이하여야 합니다."
+          ],
+          "submissionItems": [
+            { "key": "web", "title": "GitHub 레포지토리 URL", "format": "url" },
+            { "key": "pdf", "title": "솔루션 발표 자료", "format": "pdf_url" }
+          ]
+        },
+        "leaderboard": {
+          "publicLeaderboardUrl": "/hackathons/data-ml-hackathon-2026-03#leaderboard",
+          "note": "Public 리더보드는 실시간 제출 점수를 반영합니다."
+        }
+      }
+    },
+    {
       "slug": "devops-infra-sprint-2025-11",
       "title": "DevOps & 인프라 최적화 스프린트",
       "sections": {
