@@ -8,7 +8,7 @@ import { User, Award, Clock, BarChart2, Users, LogOut, Pencil, Settings, X, Chec
 import { storage } from '@/lib/storage';
 import { useAuthStore } from '@/store/authStore';
 import { HackathonParticipation, ActivityCertificate, Team } from '@/types';
-import { getHackathons } from '@/lib/data';
+import { getHackathons, getPublicTeams } from '@/lib/data';
 import Card from '@/components/common/Card';
 import Badge from '@/components/common/Badge';
 import Button from '@/components/common/Button';
@@ -44,9 +44,20 @@ export default function ProfilePage({ params }: Props) {
     if (user) {
       setParticipations(storage.getParticipations().filter((p) => p.userId === user.id));
       setCertificates(storage.getCertificates().filter((c) => c.userId === user.id));
-      const allTeams = storage.getTeams();
-      const myCreated = allTeams.filter((t) => t.leaderId === user.id);
-      setMyTeams(myCreated);
+
+      // 팀장 또는 팀원으로 속한 팀 전부 표시
+      const localTeams = storage.getTeams();
+      const publicTeams = getPublicTeams();
+      const allTeamCodes = new Map<string, Team>();
+      [...publicTeams, ...localTeams].forEach((t) => allTeamCodes.set(t.teamCode, t));
+      const memberTeamCodes = new Set(
+        storage.getTeamMembers().filter((m) => m.userId === user.id).map((m) => m.teamCode)
+      );
+      setMyTeams(
+        Array.from(allTeamCodes.values()).filter(
+          (t) => t.leaderId === user.id || memberTeamCodes.has(t.teamCode)
+        )
+      );
     }
   }, [id, user, ready]);
 
@@ -240,23 +251,28 @@ export default function ProfilePage({ params }: Props) {
           <div className="space-y-3">
             {myTeams.map((team) => {
               const hackathon = hackathons.find((h) => h.slug === team.hackathonSlug);
+              const isLeader = team.leaderId === user.id;
               return (
                 <div key={team.teamCode} className="flex items-center justify-between rounded-xl border border-gray-200 px-4 py-3 hover:border-violet-200 transition-colors">
                   <Link href={`/teams/${team.teamCode}`} className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <p className="font-medium text-gray-900">{team.name}</p>
-                      <span className="rounded-full bg-violet-100 px-2 py-0.5 text-xs text-violet-700 font-medium">팀장</span>
+                      <span className="rounded-full bg-violet-100 px-2 py-0.5 text-xs text-violet-700 font-medium">
+                        {isLeader ? '팀장' : '팀원'}
+                      </span>
                     </div>
                     <p className="text-xs text-gray-500 mt-0.5">{hackathon?.title ?? team.hackathonSlug}</p>
                     <p className="text-xs text-gray-500">{team.memberCount} / {team.maxMembers}명 · {team.isOpen ? '모집중' : '마감'}</p>
                   </Link>
-                  <button
-                    onClick={() => setManagingTeam(team)}
-                    className="ml-3 rounded-lg p-2 text-gray-400 hover:text-violet-600 hover:bg-violet-50 transition-colors"
-                    title="팀 관리"
-                  >
-                    <Settings className="h-4 w-4" />
-                  </button>
+                  {isLeader && (
+                    <button
+                      onClick={() => setManagingTeam(team)}
+                      className="ml-3 rounded-lg p-2 text-gray-400 hover:text-violet-600 hover:bg-violet-50 transition-colors"
+                      title="팀 관리"
+                    >
+                      <Settings className="h-4 w-4" />
+                    </button>
+                  )}
                 </div>
               );
             })}
