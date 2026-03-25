@@ -5,8 +5,8 @@ import { use } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
-  Users, MessageCircle, Send, Crown, UserMinus, Settings,
-  ChevronLeft, Zap, CheckCircle, XCircle,
+  Users, MessageCircle, Send, Crown, UserMinus,
+  ChevronLeft, Zap, CheckCircle, XCircle, ExternalLink,
 } from 'lucide-react';
 import { storage } from '@/lib/storage';
 import { useAuthStore } from '@/store/authStore';
@@ -199,15 +199,17 @@ export default function TeamDetailPage({ params }: Props) {
           </div>
         )}
 
-        {/* 팀장 관리 버튼 */}
-        {isLeader && (
-          <div className="mt-4 pt-4 border-t border-gray-100 flex justify-end">
-            <Link
-              href={`/camp?manage=${teamCode}`}
-              className="flex items-center gap-1.5 text-sm text-violet-600 hover:bg-violet-50 rounded-lg px-3 py-1.5 transition-colors"
+        {/* 연락처 */}
+        {team.contact?.url && (
+          <div className="mt-4 pt-4 border-t border-gray-100">
+            <a
+              href={team.contact.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-sm text-violet-600 hover:underline"
             >
-              <Settings className="h-4 w-4" /> 팀 설정
-            </Link>
+              <ExternalLink className="h-3.5 w-3.5" /> 연락처 / 오픈채팅
+            </a>
           </div>
         )}
       </Card>
