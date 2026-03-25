@@ -132,6 +132,12 @@ function CampContent() {
             const pendingCount = isMyTeam
               ? storage.getJoinRequestsForTeam(team.teamCode).filter((r) => r.status === 'pending').length
               : 0;
+            const alreadyMember = currentUser
+              ? storage.getTeamMembers(team.teamCode).some((m) => m.userId === currentUser.id)
+              : false;
+            const hasPendingRequest = currentUser
+              ? storage.getJoinRequests().some((r) => r.teamCode === team.teamCode && r.fromUserId === currentUser.id && r.status === 'pending')
+              : false;
 
             return (
               <Card key={team.teamCode} className="flex flex-col gap-3">
@@ -185,6 +191,14 @@ function CampContent() {
                         </span>
                       )}
                     </Button>
+                  ) : alreadyMember ? (
+                    <span className="flex-1 text-center text-xs text-violet-600 font-medium py-1.5 bg-violet-50 rounded-lg">
+                      합류된 팀
+                    </span>
+                  ) : hasPendingRequest ? (
+                    <span className="flex-1 text-center text-xs text-gray-500 font-medium py-1.5 bg-gray-50 rounded-lg">
+                      신청 대기 중
+                    </span>
                   ) : team.isOpen ? (
                     <Button
                       variant="secondary"

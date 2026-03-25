@@ -19,6 +19,15 @@ export default function JoinRequestModal({ team, onClose }: Props) {
 
   const user = storage.getCurrentUser();
 
+  const isMember = user
+    ? storage.getTeamMembers(team.teamCode).some((m) => m.userId === user.id)
+    : false;
+  const hasPending = user
+    ? storage.getJoinRequests().some(
+        (r) => r.teamCode === team.teamCode && r.fromUserId === user.id && r.status === 'pending'
+      )
+    : false;
+
   if (!user) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
@@ -33,6 +42,26 @@ export default function JoinRequestModal({ team, onClose }: Props) {
           <div className="flex justify-end gap-2">
             <Button variant="secondary" onClick={onClose}>취소</Button>
             <Button onClick={() => router.push('/auth/login')}>로그인하기</Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isMember || hasPending) {
+    const msg = isMember ? '이미 이 팀에 합류되어 있습니다.' : '이미 합류 신청이 대기 중입니다.';
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+        <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold text-gray-900">{isMember ? '이미 합류된 팀' : '신청 대기 중'}</h2>
+            <button onClick={onClose} className="rounded-lg p-1.5 hover:bg-gray-100">
+              <X className="h-5 w-5 text-gray-500" />
+            </button>
+          </div>
+          <p className="text-sm text-gray-600 mb-4">{msg}</p>
+          <div className="flex justify-end">
+            <Button onClick={onClose}>확인</Button>
           </div>
         </div>
       </div>
