@@ -161,8 +161,8 @@ export default async function HackathonDetailPage({ params }: Props) {
           </Card>
         )}
 
-        {/* 6. 팀 모집 */}
-        {sections.teams.campEnabled && (
+        {/* 6. 팀 모집 — 진행중인 경우만 */}
+        {hackathon.status === 'ongoing' && sections.teams.campEnabled && (
           <Card>
             <div className="flex items-center gap-2 mb-3 font-semibold text-gray-900">
               <Users className="h-4 w-4 text-violet-500" /> 팀 모집
@@ -177,8 +177,10 @@ export default async function HackathonDetailPage({ params }: Props) {
           </Card>
         )}
 
-        {/* 7. 제출 */}
-        <SubmitSection slug={slug} submit={sections.submit} />
+        {/* 7. 신청 / 제출 — 진행중인 경우만 */}
+        {hackathon.status === 'ongoing' && (
+          <SubmitSection slug={slug} hackathonTitle={hackathon.title} submit={sections.submit} />
+        )}
 
         {/* 리더보드 */}
         <Card id="leaderboard">

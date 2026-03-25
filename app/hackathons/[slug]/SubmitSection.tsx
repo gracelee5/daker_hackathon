@@ -1,45 +1,99 @@
 'use client';
 
-import { useState } from 'react';
-import { Upload, CheckCircle } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Upload, CheckCircle, ClipboardList, UserCheck } from 'lucide-react';
 import { storage } from '@/lib/storage';
-import { HackathonDetailSections, Submission } from '@/types';
+import { useAuthStore } from '@/store/authStore';
+import { HackathonDetailSections } from '@/types';
 import Card from '@/components/common/Card';
 import Button from '@/components/common/Button';
 
 interface Props {
   slug: string;
+  hackathonTitle: string;
   submit: HackathonDetailSections['submit'];
 }
 
-export default function SubmitSection({ slug, submit }: Props) {
+export default function SubmitSection({ slug, hackathonTitle, submit }: Props) {
+  const { user, addNotification } = useAuthStore();
   const [values, setValues] = useState<Record<string, string>>({});
+  const [fileNames, setFileNames] = useState<Record<string, string>>({});
+  const [registered, setRegistered] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+
+  useEffect(() => {
+    if (!user) return;
+    const participations = storage.getParticipations();
+    const mine = participations.find((p) => p.hackathonSlug === slug);
+    setRegistered(!!mine);
+    setSubmitted(!!mine?.submitted);
+  }, [user, slug]);
 
   const items = submit.submissionItems ?? [
     { key: 'main', title: '제출물', format: submit.allowedArtifactTypes[0] ?? 'url' },
   ];
 
+  const isFileFormat = (format: string) => format === 'pdf' || format === 'zip';
+
+  const handleRegister = () => {
+    if (!user) return;
+    storage.saveParticipation({
+      hackathonSlug: slug,
+      hackathonTitle,
+      teamCode: 'solo',
+      teamName: '개인 참여',
+      role: '',
+      status: 'ongoing',
+      joinedAt: new Date().toISOString(),
+    });
+    addNotification({
+      userId: user.id,
+      type: 'hackathon_registered',
+      title: '해커톤 신청 완료',
+      message: `${hackathonTitle} 해커톤에 신청이 완료되었습니다.`,
+      data: { hackathonSlug: slug, hackathonTitle },
+    });
+    setRegistered(true);
+  };
+
   const handleSubmit = () => {
-    const user = storage.getCurrentUser();
+    if (!user) return;
     const teams = storage.getTeams();
     const myTeam = teams.find((t) => t.hackathonSlug === slug);
 
-    const sub: Submission = {
+    storage.saveSubmission({
       id: `${slug}-${Date.now()}`,
       hackathonSlug: slug,
       teamCode: myTeam?.teamCode ?? 'solo',
       submittedAt: new Date().toISOString(),
       artifacts: {
         plan: values['plan'],
-        webUrl: values['web'],
-        pdfUrl: values['pdf'],
-        zipUrl: values['zip'],
+        webUrl: values['web'] || values['url'] || values['github_url'],
+        pdfUrl: values['pdf'] || fileNames['pdf'],
+        zipUrl: values['zip'] || fileNames['zip'],
       },
-    };
-    storage.saveSubmission(sub);
+    });
+    storage.markParticipationSubmitted(slug);
+    addNotification({
+      userId: user.id,
+      type: 'submission_complete',
+      title: '제출 완료',
+      message: `${hackathonTitle} 해커톤 제출이 완료되었습니다.`,
+      data: { hackathonSlug: slug, hackathonTitle },
+    });
     setSubmitted(true);
   };
+
+  if (!user) {
+    return (
+      <Card id="submit">
+        <div className="flex items-center gap-2 mb-3 font-semibold text-gray-900">
+          <Upload className="h-4 w-4 text-violet-500" /> 신청 / 제출
+        </div>
+        <p className="text-sm text-gray-500">로그인 후 해커톤에 신청하거나 결과물을 제출할 수 있습니다.</p>
+      </Card>
+    );
+  }
 
   if (submitted) {
     return (
@@ -53,10 +107,14 @@ export default function SubmitSection({ slug, submit }: Props) {
     );
   }
 
+  const hasInput = items.some((item) =>
+    isFileFormat(item.format) ? !!fileNames[item.key] : !!values[item.key]
+  );
+
   return (
     <Card id="submit">
       <div className="flex items-center gap-2 mb-4 font-semibold text-gray-900">
-        <Upload className="h-4 w-4 text-violet-500" /> 제출
+        <Upload className="h-4 w-4 text-violet-500" /> {registered ? '제출' : '신청 / 제출'}
       </div>
       <ul className="space-y-1 mb-4">
         {submit.guide.map((g, i) => (
@@ -66,23 +124,48 @@ export default function SubmitSection({ slug, submit }: Props) {
           </li>
         ))}
       </ul>
-      <div className="space-y-3 mb-5">
-        {items.map((item) => (
-          <div key={item.key}>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{item.title}</label>
-            <input
-              type="text"
-              placeholder={item.format.includes('url') ? 'https://' : '내용 입력'}
-              value={values[item.key] ?? ''}
-              onChange={(e) => setValues((prev) => ({ ...prev, [item.key]: e.target.value }))}
-              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100"
-            />
+
+      {!registered ? (
+        <div className="rounded-xl bg-violet-50 border border-violet-100 p-5 text-center">
+          <ClipboardList className="h-8 w-8 text-violet-400 mx-auto mb-3" />
+          <p className="text-sm text-gray-700 mb-4">먼저 해커톤에 신청해 주세요.</p>
+          <Button onClick={handleRegister}>
+            <UserCheck className="h-4 w-4" /> 신청하기
+          </Button>
+        </div>
+      ) : (
+        <>
+          <div className="space-y-3 mb-5">
+            {items.map((item) => (
+              <div key={item.key}>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{item.title}</label>
+                {isFileFormat(item.format) ? (
+                  <input
+                    type="file"
+                    accept={item.format === 'pdf' ? '.pdf' : '.zip,.tar.gz'}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      setFileNames((prev) => ({ ...prev, [item.key]: file?.name ?? '' }));
+                    }}
+                    className="w-full text-sm text-gray-600 file:mr-3 file:rounded-lg file:border-0 file:bg-violet-50 file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-violet-700 hover:file:bg-violet-100"
+                  />
+                ) : (
+                  <input
+                    type="text"
+                    placeholder={item.format.includes('url') ? 'https://' : '내용 입력'}
+                    value={values[item.key] ?? ''}
+                    onChange={(e) => setValues((prev) => ({ ...prev, [item.key]: e.target.value }))}
+                    className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100"
+                  />
+                )}
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-      <Button onClick={handleSubmit}>
-        <Upload className="h-4 w-4" /> 제출하기
-      </Button>
+          <Button onClick={handleSubmit} disabled={!hasInput}>
+            <Upload className="h-4 w-4" /> 제출하기
+          </Button>
+        </>
+      )}
     </Card>
   );
 }
