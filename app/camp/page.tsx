@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
-import { Users, Plus } from 'lucide-react';
+import { Users, Plus, Settings } from 'lucide-react';
 import { getHackathons, getPublicTeams } from '@/lib/data';
 import { storage } from '@/lib/storage';
 import { Team } from '@/types';
@@ -13,6 +13,7 @@ import Button from '@/components/common/Button';
 import { EmptyState, LoadingSpinner } from '@/components/common/StatusUI';
 import CreateTeamModal from './CreateTeamModal';
 import JoinRequestModal from './JoinRequestModal';
+import TeamRequestsPanel from './TeamRequestsPanel';
 
 const POSITIONS = ['Frontend', 'Backend', 'Designer', 'PM', 'ML Engineer', 'DevOps'];
 
@@ -22,17 +23,27 @@ function CampContent() {
 
   const hackathons = getHackathons();
   const publicTeams = getPublicTeams();
-  const [localTeams, setLocalTeams] = useState<Team[]>(() => storage.getTeams());
-  const allTeams = useMemo(() => {
-    const codes = new Set(publicTeams.map((t) => t.teamCode));
-    return [...publicTeams, ...localTeams.filter((t) => !codes.has(t.teamCode))];
-  }, [publicTeams, localTeams]);
 
+  const [localTeams, setLocalTeams] = useState<Team[]>(() => storage.getTeams());
   const [hackathonSlug, setHackathonSlug] = useState(hackathonFilter);
   const [positionFilter, setPositionFilter] = useState<string>('all');
   const [showOpen, setShowOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
   const [joinTarget, setJoinTarget] = useState<Team | null>(null);
+  const [managingTeam, setManagingTeam] = useState<Team | null>(null);
+
+  const currentUser = storage.getCurrentUser();
+
+  // 공개 팀 + 내가 만든 팀 병합
+  const allTeams = useMemo(() => {
+    const codes = new Set(publicTeams.map((t) => t.teamCode));
+    const merged = [...publicTeams, ...localTeams.filter((t) => !codes.has(t.teamCode))];
+    // 로컬 팀 변경사항 덮어쓰기
+    return merged.map((t) => {
+      const local = localTeams.find((l) => l.teamCode === t.teamCode);
+      return local ?? t;
+    });
+  }, [publicTeams, localTeams]);
 
   const filtered = useMemo(() => {
     return allTeams.filter((t) => {
@@ -42,6 +53,21 @@ function CampContent() {
       return true;
     });
   }, [allTeams, hackathonSlug, positionFilter, showOpen]);
+
+  const handleTeamUpdated = (updated: Team) => {
+    setLocalTeams((prev) => {
+      const idx = prev.findIndex((t) => t.teamCode === updated.teamCode);
+      if (idx >= 0) {
+        const next = [...prev];
+        next[idx] = updated;
+        return next;
+      }
+      return prev;
+    });
+    if (managingTeam?.teamCode === updated.teamCode) {
+      setManagingTeam(updated);
+    }
+  };
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
@@ -102,18 +128,26 @@ function CampContent() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {filtered.map((team) => {
             const hackathon = hackathons.find((h) => h.slug === team.hackathonSlug);
+            const isMyTeam = currentUser && team.leaderId === currentUser.id;
+            const pendingCount = isMyTeam
+              ? storage.getJoinRequestsForTeam(team.teamCode).filter((r) => r.status === 'pending').length
+              : 0;
+
             return (
               <Card key={team.teamCode} className="flex flex-col gap-3">
                 <div className="flex items-start justify-between">
-                  <div>
-                    <h3 className="font-semibold text-gray-900">{team.name}</h3>
-                    <p className="text-xs text-gray-500 mt-0.5">{hackathon?.title ?? team.hackathonSlug}</p>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-semibold text-gray-900 truncate">{team.name}</h3>
+                      {isMyTeam && (
+                        <span className="shrink-0 rounded-full bg-violet-100 px-2 py-0.5 text-xs text-violet-700 font-medium">내 팀</span>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-500 mt-0.5 truncate">{hackathon?.title ?? team.hackathonSlug}</p>
                   </div>
                   <span
-                    className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                      team.isOpen
-                        ? 'bg-emerald-100 text-emerald-700'
-                        : 'bg-gray-100 text-gray-500'
+                    className={`shrink-0 ml-2 rounded-full px-2 py-0.5 text-xs font-medium ${
+                      team.isOpen ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500'
                     }`}
                   >
                     {team.isOpen ? '모집중' : '마감'}
@@ -124,7 +158,7 @@ function CampContent() {
 
                 <div className="flex items-center gap-2 text-sm text-gray-500">
                   <Users className="h-4 w-4" />
-                  {team.memberCount}명
+                  {team.memberCount} / {team.maxMembers}명
                 </div>
 
                 {team.lookingFor.length > 0 && (
@@ -135,16 +169,33 @@ function CampContent() {
                   </div>
                 )}
 
-                {team.isOpen && (
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={() => setJoinTarget(team)}
-                    className="mt-auto"
-                  >
-                    합류 요청
-                  </Button>
-                )}
+                <div className="flex gap-2 mt-auto">
+                  {isMyTeam ? (
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => setManagingTeam(team)}
+                      className="flex-1 relative"
+                    >
+                      <Settings className="h-3.5 w-3.5" />
+                      팀 관리
+                      {pendingCount > 0 && (
+                        <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-white text-[10px] font-bold">
+                          {pendingCount}
+                        </span>
+                      )}
+                    </Button>
+                  ) : team.isOpen ? (
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => setJoinTarget(team)}
+                      className="flex-1"
+                    >
+                      합류 요청
+                    </Button>
+                  ) : null}
+                </div>
               </Card>
             );
           })}
@@ -159,6 +210,13 @@ function CampContent() {
         />
       )}
       {joinTarget && <JoinRequestModal team={joinTarget} onClose={() => setJoinTarget(null)} />}
+      {managingTeam && (
+        <TeamRequestsPanel
+          team={managingTeam}
+          onClose={() => setManagingTeam(null)}
+          onTeamUpdated={handleTeamUpdated}
+        />
+      )}
     </div>
   );
 }

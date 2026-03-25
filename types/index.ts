@@ -167,6 +167,9 @@ export interface TeamJoinRequest {
   teamCode: string;
   hackathonSlug: string;
   fromUserId: string;
+  fromUserNickname: string;
+  fromUserBio: string;
+  fromUserPositions: string[];
   toUserId?: string;
   status: 'pending' | 'accepted' | 'rejected';
   message?: string;
@@ -222,12 +225,42 @@ export interface HackathonParticipation {
   joinedAt: string;
 }
 
+export interface Notification {
+  id: string;
+  userId: string;
+  type: 'join_request' | 'request_accepted' | 'request_rejected';
+  title: string;
+  message: string;
+  read: boolean;
+  createdAt: string;
+  data?: {
+    teamCode?: string;
+    teamName?: string;
+    requestId?: string;
+    hackathonSlug?: string;
+  };
+}
+
+export interface AuthUser {
+  id: string;
+  email: string;
+  password: string;
+  nickname: string;
+  bio: string;
+  positions: Position[];
+  techStack: string[];
+  totalPoints: number;
+  createdAt: string;
+}
+
 // localStorage 전체 스키마
 export interface LocalStorageSchema {
   'syncup:currentUser': UserProfile | null;
+  'syncup:users': AuthUser[];
   'syncup:teams': Team[];
   'syncup:joinRequests': TeamJoinRequest[];
   'syncup:submissions': Submission[];
   'syncup:certificates': ActivityCertificate[];
   'syncup:participations': HackathonParticipation[];
+  'syncup:notifications': Notification[];
 }

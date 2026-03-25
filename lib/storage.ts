@@ -6,6 +6,8 @@ import type {
   ActivityCertificate,
   HackathonParticipation,
   UserProfile,
+  AuthUser,
+  Notification,
 } from '@/types';
 
 type StorageKey = keyof LocalStorageSchema;
@@ -25,13 +27,44 @@ function setItem<K extends StorageKey>(key: K, value: LocalStorageSchema[K]): vo
   localStorage.setItem(key, JSON.stringify(value));
 }
 
-// ─── 유저 ──────────────────────────────────────────────────────────────────
 export const storage = {
+  // ─── 유저 세션 ────────────────────────────────────────────────────────────
   getCurrentUser: (): UserProfile | null =>
     getItem('syncup:currentUser'),
 
   setCurrentUser: (user: UserProfile | null): void =>
     setItem('syncup:currentUser', user),
+
+  logout: (): void => {
+    if (typeof window === 'undefined') return;
+    localStorage.removeItem('syncup:currentUser');
+  },
+
+  // ─── 회원 관리 ────────────────────────────────────────────────────────────
+  getUsers: (): AuthUser[] =>
+    getItem('syncup:users') ?? [],
+
+  findUserByEmail: (email: string): AuthUser | undefined =>
+    storage.getUsers().find((u) => u.email === email),
+
+  registerUser: (user: AuthUser): void => {
+    const users = storage.getUsers();
+    users.push(user);
+    setItem('syncup:users', users);
+  },
+
+  updateUserPoints: (userId: string, points: number): void => {
+    const users = storage.getUsers();
+    const idx = users.findIndex((u) => u.id === userId);
+    if (idx >= 0) {
+      users[idx].totalPoints += points;
+      setItem('syncup:users', users);
+      const current = storage.getCurrentUser();
+      if (current?.id === userId) {
+        setItem('syncup:currentUser', { ...current, totalPoints: current.totalPoints + points });
+      }
+    }
+  },
 
   // ─── 팀 ──────────────────────────────────────────────────────────────────
   getTeams: (): Team[] =>
@@ -45,9 +78,21 @@ export const storage = {
     setItem('syncup:teams', teams);
   },
 
+  closeTeam: (teamCode: string): void => {
+    const teams = storage.getTeams();
+    const idx = teams.findIndex((t) => t.teamCode === teamCode);
+    if (idx >= 0) {
+      teams[idx].isOpen = false;
+      setItem('syncup:teams', teams);
+    }
+  },
+
   // ─── 합류 요청 ────────────────────────────────────────────────────────────
   getJoinRequests: (): TeamJoinRequest[] =>
     getItem('syncup:joinRequests') ?? [],
+
+  getJoinRequestsForTeam: (teamCode: string): TeamJoinRequest[] =>
+    storage.getJoinRequests().filter((r) => r.teamCode === teamCode),
 
   saveJoinRequest: (req: TeamJoinRequest): void => {
     const reqs = storage.getJoinRequests();
@@ -55,6 +100,63 @@ export const storage = {
     if (idx >= 0) reqs[idx] = req;
     else reqs.push(req);
     setItem('syncup:joinRequests', reqs);
+  },
+
+  updateJoinRequestStatus: (id: string, status: 'accepted' | 'rejected'): TeamJoinRequest | null => {
+    const reqs = storage.getJoinRequests();
+    const idx = reqs.findIndex((r) => r.id === id);
+    if (idx < 0) return null;
+    reqs[idx].status = status;
+    setItem('syncup:joinRequests', reqs);
+
+    // 수락 시 팀 멤버 수 증가 + 정원 초과 시 마감
+    if (status === 'accepted') {
+      const req = reqs[idx];
+      const teams = storage.getTeams();
+      const tIdx = teams.findIndex((t) => t.teamCode === req.teamCode);
+      if (tIdx >= 0) {
+        teams[tIdx].memberCount += 1;
+        if (teams[tIdx].memberCount >= teams[tIdx].maxMembers) {
+          teams[tIdx].isOpen = false;
+        }
+        setItem('syncup:teams', teams);
+      }
+    }
+    return reqs[idx];
+  },
+
+  // ─── 알림 ─────────────────────────────────────────────────────────────────
+  getNotifications: (userId: string): Notification[] =>
+    (getItem('syncup:notifications') ?? []).filter((n) => n.userId === userId),
+
+  getAllNotifications: (): Notification[] =>
+    getItem('syncup:notifications') ?? [],
+
+  addNotification: (n: Omit<Notification, 'id' | 'read' | 'createdAt'>): void => {
+    const all = storage.getAllNotifications();
+    all.unshift({
+      ...n,
+      id: `notif-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      read: false,
+      createdAt: new Date().toISOString(),
+    });
+    setItem('syncup:notifications', all);
+  },
+
+  markNotificationRead: (id: string): void => {
+    const all = storage.getAllNotifications();
+    const idx = all.findIndex((n) => n.id === id);
+    if (idx >= 0) {
+      all[idx].read = true;
+      setItem('syncup:notifications', all);
+    }
+  },
+
+  markAllNotificationsRead: (userId: string): void => {
+    const all = storage.getAllNotifications().map((n) =>
+      n.userId === userId ? { ...n, read: true } : n
+    );
+    setItem('syncup:notifications', all);
   },
 
   // ─── 제출물 ───────────────────────────────────────────────────────────────
