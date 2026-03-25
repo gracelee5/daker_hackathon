@@ -7,13 +7,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## 기술 스택
 
 - Next.js 14 (App Router), Tailwind CSS, lucide-react
-- 외부 API/DB 사용 금지, localStorage만 사용
+- 외부 API/DB 사용 가능하지만 별도 키 없이 접근 가능해야 함
 
 ## 데이터 원칙
 
 - /data 폴더의 JSON 파일이 정식 데이터 소스
 - 필드명·구조는 이 파일 기준을 따를 것
-- 임의로 더미데이터를 새로 만들지 말 것
+- 필요하다면 더미 데이터를 새 만들거나 수정해도 됨
 
 ## 코드 컨벤션
 
