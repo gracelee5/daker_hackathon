@@ -66,6 +66,7 @@ export default function GNB() {
   };
 
   return (
+  <>
     <header className="sticky top-0 z-50 border-b border-gray-200 bg-white/90 backdrop-blur-sm">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2 font-bold text-violet-600 text-lg">
@@ -227,9 +228,10 @@ export default function GNB() {
         </div>
       )}
 
-      {managingTeam && (
-        <TeamManageModal team={managingTeam} onClose={() => setManagingTeam(null)} />
-      )}
     </header>
+    {managingTeam && (
+      <TeamManageModal team={managingTeam} onClose={() => setManagingTeam(null)} />
+    )}
+  </>
   );
 }
