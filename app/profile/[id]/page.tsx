@@ -13,6 +13,7 @@ import Card from '@/components/common/Card';
 import Badge from '@/components/common/Badge';
 import Button from '@/components/common/Button';
 import { LoadingSpinner, EmptyState } from '@/components/common/StatusUI';
+import TeamManageModal from '@/components/common/TeamManageModal';
 import CertificateCard from './CertificateCard';
 
 const POSITIONS = ['Frontend', 'Backend', 'Designer', 'PM', 'ML Engineer', 'DevOps'];
@@ -31,6 +32,7 @@ export default function ProfilePage({ params }: Props) {
 
   // 편집 모달
   const [editOpen, setEditOpen] = useState(false);
+  const [managingTeam, setManagingTeam] = useState<Team | null>(null);
   const [editNickname, setEditNickname] = useState('');
   const [editBio, setEditBio] = useState('');
   const [editPositions, setEditPositions] = useState<string[]>([]);
@@ -248,13 +250,13 @@ export default function ProfilePage({ params }: Props) {
                     <p className="text-xs text-gray-500 mt-0.5">{hackathon?.title ?? team.hackathonSlug}</p>
                     <p className="text-xs text-gray-500">{team.memberCount} / {team.maxMembers}명 · {team.isOpen ? '모집중' : '마감'}</p>
                   </Link>
-                  <Link
-                    href={`/camp?manage=${team.teamCode}`}
+                  <button
+                    onClick={() => setManagingTeam(team)}
                     className="ml-3 rounded-lg p-2 text-gray-400 hover:text-violet-600 hover:bg-violet-50 transition-colors"
                     title="팀 관리"
                   >
                     <Settings className="h-4 w-4" />
-                  </Link>
+                  </button>
                 </div>
               );
             })}
@@ -328,6 +330,17 @@ export default function ProfilePage({ params }: Props) {
           </div>
         )}
       </section>
+
+      {managingTeam && (
+        <TeamManageModal
+          team={managingTeam}
+          onClose={() => setManagingTeam(null)}
+          onTeamUpdated={(updated) => {
+            setMyTeams((prev) => prev.map((t) => t.teamCode === updated.teamCode ? updated : t));
+            setManagingTeam(updated);
+          }}
+        />
+      )}
     </div>
   );
 }

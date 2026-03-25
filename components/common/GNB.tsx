@@ -5,7 +5,10 @@ import { usePathname, useRouter } from 'next/navigation';
 import { Zap, Users, Trophy, User, Menu, X, Bell, LogOut, LogIn } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { useAuthStore } from '@/store/authStore';
-import { Notification } from '@/types';
+import { storage } from '@/lib/storage';
+import { getPublicTeams } from '@/lib/data';
+import { Notification, Team } from '@/types';
+import TeamManageModal from './TeamManageModal';
 
 const NAV_ITEMS = [
   { href: '/hackathons', label: '해커톤', icon: Zap },
@@ -19,6 +22,7 @@ export default function GNB() {
   const { user, ready, notifications, unreadCount, logout, markNotificationRead, markAllNotificationsRead, refreshNotifications } = useAuthStore();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
+  const [managingTeam, setManagingTeam] = useState<Team | null>(null);
   const notifRef = useRef<HTMLDivElement>(null);
 
   // 드롭다운 열릴 때 알림 갱신
@@ -46,6 +50,9 @@ export default function GNB() {
     setNotifOpen(false);
     // 알림 타입별 이동
     if (n.type === 'join_request' && n.data?.teamCode) {
+      const allTeams = [...storage.getTeams(), ...getPublicTeams()];
+      const found = allTeams.find((t) => t.teamCode === n.data!.teamCode);
+      if (found) { setManagingTeam(found); return; }
       router.push(`/camp?manage=${n.data.teamCode}`);
     } else if (n.type === 'request_accepted' && n.data?.teamCode) {
       router.push(`/teams/${n.data.teamCode}`);
@@ -218,6 +225,10 @@ export default function GNB() {
             </Link>
           )}
         </div>
+      )}
+
+      {managingTeam && (
+        <TeamManageModal team={managingTeam} onClose={() => setManagingTeam(null)} />
       )}
     </header>
   );
