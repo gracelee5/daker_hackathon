@@ -123,8 +123,8 @@ export default function SubmitSection({ slug, hackathonTitle, submit }: Props) {
     );
   }
 
-  const hasInput = items.some((item) =>
-    isFileFormat(item.format) ? !!fileNames[item.key] : !!values[item.key]
+  const hasInput = items.every((item) =>
+    isFileFormat(item.format) ? !!fileNames[item.key] : !!values[item.key]?.trim()
   );
 
   return (

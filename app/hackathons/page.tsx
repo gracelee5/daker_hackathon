@@ -12,7 +12,7 @@ import { EmptyState } from '@/components/common/StatusUI';
 
 const STATUS_FILTERS: { value: HackathonStatus | 'all'; label: string }[] = [
   { value: 'all', label: '전체' },
-  { value: 'ongoing', label: '진행중' },
+  { value: 'ongoing', label: '진행 중' },
   { value: 'upcoming', label: '예정' },
   { value: 'ended', label: '종료' },
 ];

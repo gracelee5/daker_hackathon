@@ -10,7 +10,7 @@ const QUICK_MENUS = [
     href: '/hackathons',
     icon: Zap,
     label: '해커톤 탐색',
-    desc: '진행중·예정·종료 해커톤 전체 보기',
+    desc: '진행 중·예정·종료 해커톤 전체 보기',
     color: 'text-violet-600 bg-violet-50',
   },
   {

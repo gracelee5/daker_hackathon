@@ -8,7 +8,7 @@ interface BadgeProps {
 }
 
 const STATUS_MAP: Record<HackathonStatus, { label: string; className: string }> = {
-  ongoing: { label: '진행중', className: 'bg-emerald-100 text-emerald-700' },
+  ongoing: { label: '진행 중', className: 'bg-emerald-100 text-emerald-700' },
   upcoming: { label: '예정', className: 'bg-blue-100 text-blue-700' },
   ended: { label: '종료', className: 'bg-gray-100 text-gray-500' },
 };

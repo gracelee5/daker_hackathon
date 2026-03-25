@@ -21,7 +21,7 @@ export default function ProgressIndicator({ hackathon, milestones }: Props) {
   const percent = total > 0 ? Math.round((elapsed / total) * 100) : 0;
 
   const STATUS_LABEL: Record<string, string> = {
-    ongoing: '진행중',
+    ongoing: '진행 중',
     upcoming: '시작 전',
     ended: '종료',
   };
