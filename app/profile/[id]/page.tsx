@@ -277,30 +277,32 @@ export default function ProfilePage({ params }: Props) {
             {participations.map((p, i) => (
               <li key={i} className="ml-4">
                 <div className="absolute -left-1.5 mt-1 h-3 w-3 rounded-full border-2 border-violet-400 bg-white" />
-                <div className="flex items-start justify-between gap-2">
-                  <div className="min-w-0">
-                    <p className="font-medium text-gray-900 text-sm">{p.hackathonTitle}</p>
-                    <p className="text-xs text-gray-500 mt-0.5">{p.teamName}{p.role ? ` · ${p.role}` : ''}</p>
-                    {p.result && (
-                      <p className="text-xs text-violet-600 mt-0.5">
-                        {p.result.rank}위 / {p.result.totalTeams}팀 · {p.result.score}점
-                      </p>
-                    )}
+                <Link href={`/hackathons/${p.hackathonSlug}`} className="block hover:bg-gray-50 rounded-lg p-1 -mx-1 transition-colors">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="font-medium text-gray-900 text-sm hover:text-violet-700 transition-colors">{p.hackathonTitle}</p>
+                      <p className="text-xs text-gray-500 mt-0.5">{p.teamName}{p.role ? ` · ${p.role}` : ''}</p>
+                      {p.result && (
+                        <p className="text-xs text-violet-600 mt-0.5">
+                          {p.result.rank}위 / {p.result.totalTeams}팀 · {p.result.score}점
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex flex-col items-end gap-1 flex-shrink-0">
+                      <Badge variant="status" status={p.status} />
+                      <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                        p.submitted
+                          ? 'bg-emerald-100 text-emerald-700'
+                          : 'bg-gray-100 text-gray-500'
+                      }`}>
+                        {p.submitted ? '제출 완료' : '제출 전'}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex flex-col items-end gap-1 flex-shrink-0">
-                    <Badge variant="status" status={p.status} />
-                    <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                      p.submitted
-                        ? 'bg-emerald-100 text-emerald-700'
-                        : 'bg-gray-100 text-gray-500'
-                    }`}>
-                      {p.submitted ? '제출완료' : '제출전'}
-                    </span>
-                  </div>
-                </div>
-                <p className="text-xs text-gray-400 mt-1">
-                  {new Date(p.joinedAt).toLocaleDateString('ko-KR')}
-                </p>
+                  <p className="text-xs text-gray-400 mt-1">
+                    {new Date(p.joinedAt).toLocaleDateString('ko-KR')}
+                  </p>
+                </Link>
               </li>
             ))}
           </ol>
