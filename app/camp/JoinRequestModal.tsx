@@ -113,7 +113,7 @@ export default function JoinRequestModal({ team, onClose }: Props) {
 
         {done ? (
           <div className="text-center py-6">
-            <p className="font-semibold text-gray-900 mb-1">요청이 전송되었습니다!</p>
+            <p className="font-semibold text-gray-900 mb-1">신청이 완료되었습니다!</p>
             <p className="text-sm text-gray-500 mb-4">팀 리더의 수락을 기다려 주세요.</p>
             <Button onClick={onClose}>확인</Button>
           </div>
