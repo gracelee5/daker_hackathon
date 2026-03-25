@@ -38,6 +38,7 @@ export default function SubmitSection({ slug, hackathonTitle, submit }: Props) {
   const handleRegister = () => {
     if (!user) return;
     storage.saveParticipation({
+      userId: user.id,
       hackathonSlug: slug,
       hackathonTitle,
       teamCode: 'solo',

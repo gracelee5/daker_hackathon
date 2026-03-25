@@ -42,7 +42,7 @@ export default function ProfilePage({ params }: Props) {
   useEffect(() => {
     if (!ready) return;
     if (user) {
-      setParticipations(storage.getParticipations());
+      setParticipations(storage.getParticipations().filter((p) => p.userId === user.id));
       setCertificates(storage.getCertificates().filter((c) => c.userId === user.id));
       const allTeams = storage.getTeams();
       const myCreated = allTeams.filter((t) => t.leaderId === user.id);

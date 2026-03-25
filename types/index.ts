@@ -211,6 +211,7 @@ export interface ActivityCertificate {
 }
 
 export interface HackathonParticipation {
+  userId?: string;
   hackathonSlug: string;
   hackathonTitle: string;
   teamCode: string;
