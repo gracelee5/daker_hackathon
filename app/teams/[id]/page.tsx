@@ -28,6 +28,7 @@ export default function TeamDetailPage({ params }: Props) {
 
   const [team, setTeam] = useState<Team | null>(null);
   const [members, setMembers] = useState<TeamMember[]>([]);
+  const [memberBios, setMemberBios] = useState<Record<string, string>>({});
   const [chats, setChats] = useState<ChatMessage[]>([]);
   const [pendingRequests, setPendingRequests] = useState<TeamJoinRequest[]>([]);
   const [chatInput, setChatInput] = useState('');
@@ -45,6 +46,14 @@ export default function TeamDetailPage({ params }: Props) {
     if (found) {
       const storedMembers = storage.getTeamMembers(teamCode);
       setMembers(storedMembers);
+      // 멤버 bio 조회
+      const users = storage.getUsers();
+      const bios: Record<string, string> = {};
+      storedMembers.forEach((m) => {
+        const u = users.find((u) => u.id === m.userId);
+        if (u?.bio) bios[m.userId] = u.bio;
+      });
+      setMemberBios(bios);
       setChats(storage.getChats(teamCode));
       setPendingRequests(storage.getJoinRequestsForTeam(teamCode).filter((r) => r.status === 'pending'));
     }
@@ -211,29 +220,34 @@ export default function TeamDetailPage({ params }: Props) {
         {members.length === 0 ? (
           <p className="text-sm text-gray-400 text-center py-4">멤버 정보가 없습니다.</p>
         ) : (
-          <div className="space-y-2">
+          <div className="grid sm:grid-cols-2 gap-3">
             {members.map((member) => (
-              <div key={member.userId} className="flex items-center justify-between rounded-xl bg-gray-50 px-4 py-3">
-                <div className="flex items-center gap-3">
-                  <div className="h-8 w-8 rounded-full bg-violet-100 flex items-center justify-center flex-shrink-0">
-                    {member.isLeader
-                      ? <Crown className="h-4 w-4 text-amber-500" />
-                      : <span className="text-xs font-bold text-violet-500">{member.nickname[0]}</span>
-                    }
+              <div key={member.userId} className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex items-start gap-3 min-w-0">
+                    <div className="h-10 w-10 rounded-full bg-violet-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      {member.isLeader
+                        ? <Crown className="h-5 w-5 text-amber-500" />
+                        : <span className="text-sm font-bold text-violet-500">{member.nickname[0]}</span>
+                      }
+                    </div>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <p className="text-sm font-semibold text-gray-900">{member.nickname}</p>
+                        {member.isLeader && (
+                          <span className="text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full font-medium">팀장</span>
+                        )}
+                      </div>
+                      <p className="text-xs text-violet-600 font-medium mt-0.5">{member.role}</p>
+                      {memberBios[member.userId] && (
+                        <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{memberBios[member.userId]}</p>
+                      )}
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">{member.nickname}</p>
-                    <p className="text-xs text-gray-500">{member.role}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  {member.isLeader && (
-                    <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-medium">팀장</span>
-                  )}
                   {isLeader && !member.isLeader && user?.id !== member.userId && (
                     <button
                       onClick={() => handleKick(member)}
-                      className="rounded-lg p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                      className="rounded-lg p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors flex-shrink-0"
                       title="내보내기"
                     >
                       <UserMinus className="h-4 w-4" />
