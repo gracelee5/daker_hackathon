@@ -83,6 +83,19 @@ export default function TeamDetailPage({ params }: Props) {
     storage.addChat(msg);
     setChats((prev) => [...prev, msg]);
     setChatInput('');
+
+    // 다른 팀원에게 채팅 알림
+    members
+      .filter((m) => m.userId !== user.id)
+      .forEach((m) => {
+        addNotification({
+          userId: m.userId,
+          type: 'team_chat',
+          title: `${team?.name ?? teamCode} 채팅`,
+          message: `${user.nickname}: ${chatInput.trim()}`,
+          data: { teamCode, teamName: team?.name },
+        });
+      });
   };
 
   const handleApprove = (req: TeamJoinRequest) => {

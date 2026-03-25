@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Bell, CheckCheck, Users, CheckCircle, XCircle } from 'lucide-react';
+import { Bell, CheckCheck, Users, CheckCircle, XCircle, MessageCircle } from 'lucide-react';
 import { storage } from '@/lib/storage';
 import { Notification } from '@/types';
 import Card from '@/components/common/Card';
@@ -13,6 +13,7 @@ const TYPE_ICON: Record<Notification['type'], React.ReactNode> = {
   request_rejected: <XCircle className="h-5 w-5 text-red-400" />,
   hackathon_registered: <CheckCircle className="h-5 w-5 text-blue-500" />,
   submission_complete: <CheckCircle className="h-5 w-5 text-violet-500" />,
+  team_chat: <MessageCircle className="h-5 w-5 text-blue-500" />,
 };
 
 export default function NotificationsPage() {

@@ -53,6 +53,8 @@ export default function GNB() {
       router.push(`/hackathons/${n.data.hackathonSlug}`);
     } else if (n.type === 'submission_complete' && n.data?.hackathonSlug) {
       router.push(`/profile/me`);
+    } else if (n.type === 'team_chat' && n.data?.teamCode) {
+      router.push(`/teams/${n.data.teamCode}#chat`);
     }
   };
 

@@ -230,7 +230,7 @@ export interface HackathonParticipation {
 export interface Notification {
   id: string;
   userId: string;
-  type: 'join_request' | 'request_accepted' | 'request_rejected' | 'hackathon_registered' | 'submission_complete';
+  type: 'join_request' | 'request_accepted' | 'request_rejected' | 'hackathon_registered' | 'submission_complete' | 'team_chat';
   title: string;
   message: string;
   read: boolean;
