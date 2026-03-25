@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Trophy, ExternalLink, ArrowRight } from 'lucide-react';
+import { Trophy, ArrowRight } from 'lucide-react';
 import { getAllLeaderboardEntries, getHackathons } from '@/lib/data';
 import Card from '@/components/common/Card';
 import { EmptyState } from '@/components/common/StatusUI';
@@ -12,7 +12,6 @@ interface GlobalEntry {
   hackathonSlug: string;
   submittedAt: string;
   scoreBreakdown?: { participant: number; judge: number };
-  artifacts?: { webUrl?: string; pdfUrl?: string; planTitle?: string };
 }
 
 function buildGlobalRanking(): GlobalEntry[] {
@@ -29,7 +28,6 @@ function buildGlobalRanking(): GlobalEntry[] {
       hackathonSlug: lb.hackathonSlug,
       submittedAt: e.submittedAt,
       scoreBreakdown: e.scoreBreakdown,
-      artifacts: e.artifacts,
     }));
   });
 
@@ -107,26 +105,13 @@ export default function RankingsPage() {
                       </p>
                     )}
                   </div>
-                  {/* 제출물 외부 URL이 있으면 아이콘 링크, 없으면 해커톤 상세로 이동 */}
-                  {entry.artifacts?.webUrl ? (
-                    <a
-                      href={entry.artifacts.webUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="shrink-0 rounded-lg p-1.5 text-gray-400 hover:text-violet-600 hover:bg-violet-50 transition-colors"
-                      title="제출물 보기"
-                    >
-                      <ExternalLink className="h-4 w-4" />
-                    </a>
-                  ) : (
-                    <Link
-                      href={`/hackathons/${entry.hackathonSlug}#leaderboard`}
-                      className="shrink-0 rounded-lg p-1.5 text-gray-400 hover:text-violet-600 hover:bg-violet-50 transition-colors"
-                      title="해커톤 상세 보기"
-                    >
-                      <ArrowRight className="h-4 w-4" />
-                    </Link>
-                  )}
+                  <Link
+                    href={`/hackathons/${entry.hackathonSlug}#leaderboard`}
+                    className="shrink-0 rounded-lg p-1.5 text-gray-400 hover:text-violet-600 hover:bg-violet-50 transition-colors"
+                    title="해커톤 상세 보기"
+                  >
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
                 </div>
               ))}
             </div>
