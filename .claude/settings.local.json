@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p tmp_init)",
+      "Bash(npx create-next-app@latest . --typescript --tailwind --app --no-src-dir --import-alias \"@/*\" --yes)",
+      "Bash(cp -r tmp_init/. .)",
+      "Bash(rm -rf tmp_init)",
+      "Bash(npm install:*)"
+    ]
+  }
+}
