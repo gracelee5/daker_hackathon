@@ -11,14 +11,16 @@ const POSITIONS = ['Frontend', 'Backend', 'Designer', 'PM', 'ML Engineer', 'DevO
 interface Props {
   hackathons: Hackathon[];
   onClose: () => void;
+  onCreated: (team: Team) => void;
 }
 
-export default function CreateTeamModal({ hackathons, onClose }: Props) {
+export default function CreateTeamModal({ hackathons, onClose, onCreated }: Props) {
   const [name, setName] = useState('');
   const [hackathonSlug, setHackathonSlug] = useState(hackathons[0]?.slug ?? '');
   const [intro, setIntro] = useState('');
   const [lookingFor, setLookingFor] = useState<string[]>([]);
   const [contactUrl, setContactUrl] = useState('');
+  const [maxMembers, setMaxMembers] = useState(4);
 
   const togglePosition = (pos: string) => {
     setLookingFor((prev) =>
@@ -28,6 +30,7 @@ export default function CreateTeamModal({ hackathons, onClose }: Props) {
 
   const handleCreate = () => {
     if (!name.trim() || !hackathonSlug) return;
+    const user = storage.getCurrentUser();
 
     const team: Team = {
       teamCode: `T-${Date.now()}`,
@@ -35,18 +38,21 @@ export default function CreateTeamModal({ hackathons, onClose }: Props) {
       name: name.trim(),
       isOpen: true,
       memberCount: 1,
+      maxMembers,
       lookingFor,
       intro: intro.trim(),
       contact: { type: 'link', url: contactUrl.trim() },
       createdAt: new Date().toISOString(),
+      leaderId: user?.id,
     };
     storage.saveTeam(team);
+    onCreated(team);
     onClose();
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
-      <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+      <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-lg font-bold text-gray-900">팀 만들기</h2>
           <button onClick={onClose} className="rounded-lg p-1.5 hover:bg-gray-100">
@@ -88,6 +94,23 @@ export default function CreateTeamModal({ hackathons, onClose }: Props) {
               rows={3}
               className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-violet-400 resize-none"
             />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              최대 팀원 수: <span className="text-violet-600 font-semibold">{maxMembers}명</span>
+            </label>
+            <input
+              type="range"
+              min={1}
+              max={10}
+              value={maxMembers}
+              onChange={(e) => setMaxMembers(Number(e.target.value))}
+              className="w-full accent-violet-600"
+            />
+            <div className="flex justify-between text-xs text-gray-400 mt-1">
+              <span>1명</span><span>10명</span>
+            </div>
           </div>
 
           <div>

@@ -111,6 +111,7 @@ export interface Team {
   name: string;
   isOpen: boolean;
   memberCount: number;
+  maxMembers: number;
   lookingFor: string[];
   intro: string;
   contact: {
@@ -118,6 +119,7 @@ export interface Team {
     url: string;
   };
   createdAt: string;
+  leaderId?: string;
 }
 
 // 리더보드

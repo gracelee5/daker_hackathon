@@ -3,12 +3,8 @@
     "slug": "aimers-8-model-lite",
     "title": "Aimers 8기 : 모델 경량화 온라인 해커톤",
     "status": "ended",
-    "tags": [
-      "LLM",
-      "Compression",
-      "vLLM"
-    ],
-    "thumbnailUrl": "https://example.com/public/img/aimers8.png",
+    "tags": ["LLM", "Compression", "vLLM"],
+    "thumbnailUrl": "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=600&q=80",
     "period": {
       "timezone": "Asia/Seoul",
       "submissionDeadlineAt": "2026-02-25T10:00:00+09:00",
@@ -24,12 +20,8 @@
     "slug": "monthly-vibe-coding-2026-02",
     "title": "월간 해커톤 : 바이브 코딩 개선 AI 아이디어 공모전 (2026.02)",
     "status": "ongoing",
-    "tags": [
-      "Idea",
-      "GenAI",
-      "Workflow"
-    ],
-    "thumbnailUrl": "https://example.com/public/img/vibe202602.png",
+    "tags": ["Idea", "GenAI", "Workflow"],
+    "thumbnailUrl": "https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=600&q=80",
     "period": {
       "timezone": "Asia/Seoul",
       "submissionDeadlineAt": "2026-03-03T10:00:00+09:00",
@@ -45,13 +37,8 @@
     "slug": "daker-handover-2026-03",
     "title": "긴급 인수인계 해커톤: 명세서만 보고 구현하라",
     "status": "upcoming",
-    "tags": [
-      "VibeCoding",
-      "Web",
-      "Vercel",
-      "Handover"
-    ],
-    "thumbnailUrl": "https://example.com/public/img/daker-handover-202603.png",
+    "tags": ["VibeCoding", "Web", "Vercel", "Handover"],
+    "thumbnailUrl": "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=600&q=80",
     "period": {
       "timezone": "Asia/Seoul",
       "submissionDeadlineAt": "2026-03-30T10:00:00+09:00",
@@ -61,6 +48,91 @@
       "detail": "/hackathons/daker-handover-2026-03",
       "rules": "https://example.com/public/rules/daker-handover-202603",
       "faq": "https://example.com/public/faq/daker-handover-202603"
+    }
+  },
+  {
+    "slug": "ai-design-sprint-2026-03",
+    "title": "AI × 디자인 스프린트: 72시간 프로덕트 챌린지",
+    "status": "ongoing",
+    "tags": ["AI", "Design", "Product", "Sprint"],
+    "thumbnailUrl": "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=600&q=80",
+    "period": {
+      "timezone": "Asia/Seoul",
+      "submissionDeadlineAt": "2026-03-28T18:00:00+09:00",
+      "endAt": "2026-03-30T12:00:00+09:00"
+    },
+    "links": {
+      "detail": "/hackathons/ai-design-sprint-2026-03",
+      "rules": "https://example.com/public/rules/ai-design-sprint",
+      "faq": "https://example.com/public/faq/ai-design-sprint"
+    }
+  },
+  {
+    "slug": "open-data-challenge-2026",
+    "title": "공공데이터 활용 챌린지 2026: 데이터로 세상을 바꿔라",
+    "status": "upcoming",
+    "tags": ["OpenData", "Visualization", "PublicGood"],
+    "thumbnailUrl": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80",
+    "period": {
+      "timezone": "Asia/Seoul",
+      "submissionDeadlineAt": "2026-04-10T23:59:00+09:00",
+      "endAt": "2026-04-15T18:00:00+09:00"
+    },
+    "links": {
+      "detail": "/hackathons/open-data-challenge-2026",
+      "rules": "https://example.com/public/rules/open-data-2026",
+      "faq": "https://example.com/public/faq/open-data-2026"
+    }
+  },
+  {
+    "slug": "web3-build-2025-12",
+    "title": "Web3 Build Week: 온체인 프로덕트 48시간",
+    "status": "ended",
+    "tags": ["Web3", "Solidity", "DeFi"],
+    "thumbnailUrl": "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=600&q=80",
+    "period": {
+      "timezone": "Asia/Seoul",
+      "submissionDeadlineAt": "2025-12-20T18:00:00+09:00",
+      "endAt": "2025-12-22T12:00:00+09:00"
+    },
+    "links": {
+      "detail": "/hackathons/web3-build-2025-12",
+      "rules": "https://example.com/public/rules/web3-build-2025",
+      "faq": "https://example.com/public/faq/web3-build-2025"
+    }
+  },
+  {
+    "slug": "mobile-ux-2026-04",
+    "title": "모바일 UX 해커톤: 접근성과 편의성을 동시에",
+    "status": "upcoming",
+    "tags": ["Mobile", "UX", "Accessibility", "React Native"],
+    "thumbnailUrl": "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=600&q=80",
+    "period": {
+      "timezone": "Asia/Seoul",
+      "submissionDeadlineAt": "2026-04-20T23:59:00+09:00",
+      "endAt": "2026-04-25T18:00:00+09:00"
+    },
+    "links": {
+      "detail": "/hackathons/mobile-ux-2026-04",
+      "rules": "https://example.com/public/rules/mobile-ux-2026",
+      "faq": "https://example.com/public/faq/mobile-ux-2026"
+    }
+  },
+  {
+    "slug": "devops-infra-sprint-2025-11",
+    "title": "DevOps & 인프라 최적화 스프린트",
+    "status": "ended",
+    "tags": ["DevOps", "Kubernetes", "CI/CD", "Cloud"],
+    "thumbnailUrl": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&q=80",
+    "period": {
+      "timezone": "Asia/Seoul",
+      "submissionDeadlineAt": "2025-11-15T18:00:00+09:00",
+      "endAt": "2025-11-17T12:00:00+09:00"
+    },
+    "links": {
+      "detail": "/hackathons/devops-infra-sprint-2025-11",
+      "rules": "https://example.com/public/rules/devops-sprint-2025",
+      "faq": "https://example.com/public/faq/devops-sprint-2025"
     }
   }
 ]

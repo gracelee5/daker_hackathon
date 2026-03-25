@@ -3,18 +3,14 @@
     "teamCode": "T-ALPHA",
     "hackathonSlug": "aimers-8-model-lite",
     "name": "Team Alpha",
-    "isOpen": true,
+    "isOpen": false,
     "memberCount": 3,
-    "lookingFor": [
-      "Backend",
-      "ML Engineer"
-    ],
-    "intro": "추론 최적화/경량화 실험을 함께 진행할 팀원을 찾습니다.",
-    "contact": {
-      "type": "link",
-      "url": "https://open.kakao.com/o/example1"
-    },
-    "createdAt": "2026-02-20T11:00:00+09:00"
+    "maxMembers": 5,
+    "lookingFor": [],
+    "intro": "추론 최적화/경량화 실험을 함께 진행한 팀입니다.",
+    "contact": { "type": "link", "url": "https://open.kakao.com/o/example1" },
+    "createdAt": "2026-02-20T11:00:00+09:00",
+    "leaderId": "user-demo-1"
   },
   {
     "teamCode": "T-BETA",
@@ -22,16 +18,12 @@
     "name": "PromptRunners",
     "isOpen": true,
     "memberCount": 1,
-    "lookingFor": [
-      "Frontend",
-      "Designer"
-    ],
+    "maxMembers": 3,
+    "lookingFor": ["Frontend", "Designer"],
     "intro": "프롬프트 품질 점수화 + 개선 가이드 UX를 기획합니다.",
-    "contact": {
-      "type": "link",
-      "url": "https://forms.gle/example2"
-    },
-    "createdAt": "2026-02-18T18:30:00+09:00"
+    "contact": { "type": "link", "url": "https://forms.gle/example2" },
+    "createdAt": "2026-02-18T18:30:00+09:00",
+    "leaderId": "user-demo-2"
   },
   {
     "teamCode": "T-HANDOVER-01",
@@ -39,16 +31,12 @@
     "name": "404found",
     "isOpen": true,
     "memberCount": 3,
-    "lookingFor": [
-      "Frontend",
-      "Designer"
-    ],
+    "maxMembers": 5,
+    "lookingFor": ["Frontend", "Designer"],
     "intro": "명세서 기반으로 기본 기능을 빠르게 완성하고 UX 확장을 노립니다.",
-    "contact": {
-      "type": "link",
-      "url": "https://open.kakao.com/o/example3"
-    },
-    "createdAt": "2026-03-04T11:00:00+09:00"
+    "contact": { "type": "link", "url": "https://open.kakao.com/o/example3" },
+    "createdAt": "2026-03-04T11:00:00+09:00",
+    "leaderId": "user-demo-3"
   },
   {
     "teamCode": "T-HANDOVER-02",
@@ -56,12 +44,76 @@
     "name": "LGTM",
     "isOpen": false,
     "memberCount": 5,
+    "maxMembers": 5,
     "lookingFor": [],
     "intro": "기획서-구현-문서화를 깔끔하게 맞추는 방향으로 진행합니다.",
-    "contact": {
-      "type": "link",
-      "url": "https://forms.gle/example4"
-    },
-    "createdAt": "2026-03-05T09:20:00+09:00"
+    "contact": { "type": "link", "url": "https://forms.gle/example4" },
+    "createdAt": "2026-03-05T09:20:00+09:00",
+    "leaderId": "user-demo-4"
+  },
+  {
+    "teamCode": "T-VIBE-01",
+    "hackathonSlug": "monthly-vibe-coding-2026-02",
+    "name": "CodeWhisperers",
+    "isOpen": true,
+    "memberCount": 2,
+    "maxMembers": 3,
+    "lookingFor": ["PM"],
+    "intro": "AI 코딩 도구의 컨텍스트 관리 문제를 해결하는 아이디어를 구현 중입니다.",
+    "contact": { "type": "link", "url": "https://open.kakao.com/o/example5" },
+    "createdAt": "2026-02-19T14:00:00+09:00",
+    "leaderId": "user-demo-5"
+  },
+  {
+    "teamCode": "T-DESIGN-01",
+    "hackathonSlug": "ai-design-sprint-2026-03",
+    "name": "PixelMind",
+    "isOpen": true,
+    "memberCount": 2,
+    "maxMembers": 4,
+    "lookingFor": ["Frontend", "Backend"],
+    "intro": "AI로 생성한 UI를 실시간으로 편집하는 디자인 툴을 만들고 있습니다.",
+    "contact": { "type": "link", "url": "https://open.kakao.com/o/example6" },
+    "createdAt": "2026-03-15T10:00:00+09:00",
+    "leaderId": "user-demo-6"
+  },
+  {
+    "teamCode": "T-DESIGN-02",
+    "hackathonSlug": "ai-design-sprint-2026-03",
+    "name": "NoCodeVibes",
+    "isOpen": true,
+    "memberCount": 1,
+    "maxMembers": 4,
+    "lookingFor": ["Frontend", "Designer", "PM"],
+    "intro": "노코드 AI 랜딩페이지 빌더를 72시간 안에 완성하는 것이 목표입니다.",
+    "contact": { "type": "link", "url": "https://forms.gle/example7" },
+    "createdAt": "2026-03-16T09:00:00+09:00",
+    "leaderId": "user-demo-7"
+  },
+  {
+    "teamCode": "T-DATA-01",
+    "hackathonSlug": "open-data-challenge-2026",
+    "name": "DataForGood",
+    "isOpen": true,
+    "memberCount": 2,
+    "maxMembers": 5,
+    "lookingFor": ["Backend", "Designer"],
+    "intro": "대기질 공공데이터를 활용해 취약계층 환경 지도를 시각화합니다.",
+    "contact": { "type": "link", "url": "https://open.kakao.com/o/example8" },
+    "createdAt": "2026-03-20T11:00:00+09:00",
+    "leaderId": "user-demo-8"
+  },
+  {
+    "teamCode": "T-MOBILE-01",
+    "hackathonSlug": "mobile-ux-2026-04",
+    "name": "A11yFirst",
+    "isOpen": true,
+    "memberCount": 2,
+    "maxMembers": 4,
+    "lookingFor": ["Frontend", "Designer"],
+    "intro": "시각 장애인을 위한 대중교통 앱 접근성 개선 프로젝트입니다.",
+    "contact": { "type": "link", "url": "https://open.kakao.com/o/example9" },
+    "createdAt": "2026-03-25T10:00:00+09:00",
+    "leaderId": "user-demo-9"
   }
 ]

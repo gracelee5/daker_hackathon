@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { getHackathonBySlug, getHackathonDetail, getLeaderboard } from '@/lib/data';
 import Badge from '@/components/common/Badge';
 import Card from '@/components/common/Card';
@@ -24,6 +25,20 @@ export default async function HackathonDetailPage({ params }: Props) {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
+      {/* 썸네일 */}
+      <div className="relative h-52 w-full rounded-2xl overflow-hidden mb-6 bg-gradient-to-br from-violet-100 to-blue-100">
+        {hackathon.thumbnailUrl && (
+          <Image
+            src={hackathon.thumbnailUrl}
+            alt={hackathon.title}
+            fill
+            className="object-cover"
+            sizes="(max-width: 896px) 100vw, 896px"
+          />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+      </div>
+
       {/* 헤더 */}
       <div className="mb-8">
         <div className="flex items-center gap-2 mb-3">

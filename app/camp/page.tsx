@@ -22,7 +22,7 @@ function CampContent() {
 
   const hackathons = getHackathons();
   const publicTeams = getPublicTeams();
-  const [localTeams] = useState<Team[]>(() => storage.getTeams());
+  const [localTeams, setLocalTeams] = useState<Team[]>(() => storage.getTeams());
   const allTeams = useMemo(() => {
     const codes = new Set(publicTeams.map((t) => t.teamCode));
     return [...publicTeams, ...localTeams.filter((t) => !codes.has(t.teamCode))];
@@ -151,7 +151,13 @@ function CampContent() {
         </div>
       )}
 
-      {createOpen && <CreateTeamModal hackathons={hackathons} onClose={() => setCreateOpen(false)} />}
+      {createOpen && (
+        <CreateTeamModal
+          hackathons={hackathons}
+          onClose={() => setCreateOpen(false)}
+          onCreated={(team) => setLocalTeams((prev) => [team, ...prev])}
+        />
+      )}
       {joinTarget && <JoinRequestModal team={joinTarget} onClose={() => setJoinTarget(null)} />}
     </div>
   );
