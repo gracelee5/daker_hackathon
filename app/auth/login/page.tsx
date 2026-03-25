@@ -104,7 +104,7 @@ export default function LoginPage() {
 
         {/* 테스트 계정 안내 */}
         <div className="mt-4 rounded-xl bg-violet-50 border border-violet-100 px-4 py-3 text-sm text-violet-700">
-          <p className="font-medium mb-1">🔑 심사용 테스트 계정</p>
+          <p className="font-medium mb-1">🔑 테스트 계정</p>
           <p>이메일: <span className="font-mono font-semibold">test@syncup.com</span></p>
           <p>비밀번호: <span className="font-mono font-semibold">password1234</span></p>
         </div>
