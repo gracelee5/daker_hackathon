@@ -60,12 +60,13 @@ export default function SubmitSection({ slug, hackathonTitle, submit }: Props) {
     if (!user) return;
     const teams = storage.getTeams();
     const myTeam = teams.find((t) => t.hackathonSlug === slug);
+    const now = new Date().toISOString();
 
     storage.saveSubmission({
       id: `${slug}-${Date.now()}`,
       hackathonSlug: slug,
       teamCode: myTeam?.teamCode ?? 'solo',
-      submittedAt: new Date().toISOString(),
+      submittedAt: now,
       artifacts: {
         plan: values['plan'],
         webUrl: values['web'] || values['url'] || values['github_url'],
@@ -74,11 +75,26 @@ export default function SubmitSection({ slug, hackathonTitle, submit }: Props) {
       },
     });
     storage.markParticipationSubmitted(slug);
+
+    // 증명서 자동 발급
+    const members = storage.getTeamMembers(myTeam?.teamCode ?? '');
+    const myMember = members.find((m) => m.userId === user.id);
+    const role = myMember?.role || user.positions[0] || 'Participant';
+    storage.saveCertificate({
+      id: `cert-${slug}-${user.id}`,
+      userId: user.id,
+      hackathonSlug: slug,
+      hackathonTitle,
+      teamName: myTeam?.name ?? '개인 참여',
+      role,
+      issuedAt: now,
+    });
+
     addNotification({
       userId: user.id,
       type: 'submission_complete',
-      title: '제출 완료',
-      message: `${hackathonTitle} 해커톤 제출이 완료되었습니다.`,
+      title: '제출 완료 · 증명서 발급',
+      message: `${hackathonTitle} 해커톤 제출 완료! 경험 증명서가 발급되었습니다.`,
       data: { hackathonSlug: slug, hackathonTitle },
     });
     setSubmitted(true);
