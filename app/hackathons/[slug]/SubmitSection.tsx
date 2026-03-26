@@ -61,7 +61,8 @@ export default function SubmitSection({ slug, hackathonTitle, submit }: Props) {
     { key: 'main', title: '제출물', format: submit.allowedArtifactTypes[0] ?? 'url' },
   ];
 
-  const isFileFormat = (format: string) => format === 'pdf' || format === 'zip';
+  const isFileFormat = (format: string) =>
+    format === 'pdf' || format === 'pdf_url' || format === 'zip';
 
   const handleRegister = () => {
     if (!user) return;
@@ -149,9 +150,10 @@ export default function SubmitSection({ slug, hackathonTitle, submit }: Props) {
       },
     });
 
-    // 팀 참여인 경우 팀 전체 제출 완료 처리, 솔로인 경우 개인만
+    // 팀 참여인 경우 팀 전체 제출 완료 처리 + 모집 자동 마감, 솔로인 경우 개인만
     if (teamCode !== 'solo') {
       storage.markTeamParticipationSubmitted(slug, teamCode);
+      storage.closeTeam(teamCode);
     } else {
       storage.markSoloParticipationSubmitted(user.id, slug);
     }

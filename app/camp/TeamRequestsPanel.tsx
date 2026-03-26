@@ -60,25 +60,6 @@ export default function TeamRequestsPanel({ team, onClose, onTeamUpdated }: Prop
           team.teamCode,
           team.name
         );
-
-        // 팀에 기존 참여 이력이 있으면 신규 멤버에게도 같은 참여 이력 부여
-        const teamParticipation = storage.getParticipations().find(
-          (p) => p.teamCode === team.teamCode && p.hackathonSlug === team.hackathonSlug
-        );
-        if (teamParticipation) {
-          const existingParticipation = storage.getUserParticipationForHackathon(
-            req.fromUserId,
-            team.hackathonSlug
-          );
-          if (!existingParticipation) {
-            storage.saveParticipation({
-              ...teamParticipation,
-              userId: req.fromUserId,
-              role: req.fromUserPositions[0] ?? 'Frontend',
-              joinedAt: new Date().toISOString(),
-            });
-          }
-        }
       }
 
       const updated = storage.getTeams().find((t) => t.teamCode === team.teamCode);

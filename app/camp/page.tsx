@@ -32,8 +32,14 @@ function CampContent() {
   const [createOpen, setCreateOpen] = useState(false);
   const [joinTarget, setJoinTarget] = useState<Team | null>(null);
   const [managingTeam, setManagingTeam] = useState<Team | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
 
   const currentUser = storage.getCurrentUser();
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 3000);
+  };
 
   // 공개 팀 + 내가 만든 팀 병합
   const allTeams = useMemo(() => {
@@ -130,10 +136,12 @@ function CampContent() {
           {filtered.map((team) => {
             const hackathon = hackathons.find((h) => h.slug === team.hackathonSlug);
             const isLeader = currentUser && team.leaderId === currentUser.id;
+            const teamMembers = storage.getTeamMembers(team.teamCode);
             const alreadyMember = currentUser
-              ? storage.getTeamMembers(team.teamCode).some((m) => m.userId === currentUser.id)
+              ? teamMembers.some((m) => m.userId === currentUser.id)
               : false;
             const isMyTeam = !!(isLeader || alreadyMember);
+            const actualMemberCount = teamMembers.length > 0 ? teamMembers.length : team.memberCount;
             const pendingCount = isLeader
               ? storage.getJoinRequestsForTeam(team.teamCode).filter((r) => r.status === 'pending').length
               : 0;
@@ -184,7 +192,7 @@ function CampContent() {
 
                 <div className="flex items-center gap-2 text-sm text-gray-500">
                   <Users className="h-4 w-4" />
-                  {team.memberCount} / {team.maxMembers}명
+                  {actualMemberCount} / {team.maxMembers}명
                 </div>
 
                 {team.lookingFor.length > 0 && (
@@ -243,13 +251,29 @@ function CampContent() {
           onCreated={(team) => setLocalTeams((prev) => [team, ...prev])}
         />
       )}
-      {joinTarget && <JoinRequestModal team={joinTarget} onClose={() => setJoinTarget(null)} />}
+      {joinTarget && (
+        <JoinRequestModal
+          team={joinTarget}
+          onClose={() => setJoinTarget(null)}
+          onRequestSent={() => {
+            setJoinTarget(null);
+            showToast('합류 신청이 보내졌습니다.');
+          }}
+        />
+      )}
       {managingTeam && (
         <TeamRequestsPanel
           team={managingTeam}
           onClose={() => setManagingTeam(null)}
           onTeamUpdated={handleTeamUpdated}
         />
+      )}
+
+      {/* 토스트 */}
+      {toast && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-gray-900 text-white text-sm px-5 py-2.5 rounded-full shadow-lg pointer-events-none">
+          {toast}
+        </div>
       )}
     </div>
   );

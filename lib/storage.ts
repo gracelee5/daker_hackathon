@@ -259,6 +259,14 @@ export const storage = {
     if (!exists) {
       all.push(member);
       setItem('syncup:teamMembers', all);
+      // 로컬에 저장된 팀의 memberCount를 실제 teamMembers 수와 동기화
+      const teams = storage.getTeams();
+      const tIdx = teams.findIndex((t) => t.teamCode === member.teamCode);
+      if (tIdx >= 0) {
+        const actualCount = all.filter((m) => m.teamCode === member.teamCode).length;
+        teams[tIdx].memberCount = actualCount;
+        setItem('syncup:teams', teams);
+      }
     }
   },
 

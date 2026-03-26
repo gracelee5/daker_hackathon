@@ -137,25 +137,6 @@ export default function TeamDetailPage({ params }: Props) {
         teamCode,
         team.name
       );
-
-      // 팀에 기존 참여 이력이 있으면 신규 멤버에게도 참여 이력 부여
-      const teamParticipation = storage.getParticipations().find(
-        (p) => p.teamCode === teamCode && p.hackathonSlug === team.hackathonSlug
-      );
-      if (teamParticipation) {
-        const existingParticipation = storage.getUserParticipationForHackathon(
-          req.fromUserId,
-          team.hackathonSlug
-        );
-        if (!existingParticipation) {
-          storage.saveParticipation({
-            ...teamParticipation,
-            userId: req.fromUserId,
-            role: req.fromUserPositions[0] ?? 'Frontend',
-            joinedAt: new Date().toISOString(),
-          });
-        }
-      }
     }
 
     addNotification({
@@ -215,7 +196,10 @@ export default function TeamDetailPage({ params }: Props) {
           </div>
           <div className="text-right flex-shrink-0">
             <p className="text-xs text-gray-400 mb-0.5">팀원</p>
-            <p className="text-xl font-bold text-violet-600">{team.memberCount}<span className="text-sm text-gray-400">/{team.maxMembers}</span></p>
+            <p className="text-xl font-bold text-violet-600">
+              {members.length > 0 ? members.length : team.memberCount}
+              <span className="text-sm text-gray-400">/{team.maxMembers}</span>
+            </p>
           </div>
         </div>
 

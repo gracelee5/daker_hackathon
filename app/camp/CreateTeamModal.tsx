@@ -46,6 +46,19 @@ export default function CreateTeamModal({ hackathons, onClose, onCreated }: Prop
       leaderId: user?.id,
     };
     storage.saveTeam(team);
+
+    // 팀 생성자(팀장)를 teamMembers에 즉시 추가
+    if (user) {
+      storage.addTeamMember({
+        teamCode: team.teamCode,
+        userId: user.id,
+        nickname: user.nickname,
+        role: user.positions[0] ?? 'Frontend',
+        joinedAt: team.createdAt,
+        isLeader: true,
+      });
+    }
+
     onCreated(team);
     onClose();
   };

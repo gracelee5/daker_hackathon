@@ -53,10 +53,15 @@ export default function ProfilePage({ params }: Props) {
       const memberTeamCodes = new Set(
         storage.getTeamMembers().filter((m) => m.userId === user.id).map((m) => m.teamCode)
       );
+      const filteredTeams = Array.from(allTeamCodes.values()).filter(
+        (t) => t.leaderId === user.id || memberTeamCodes.has(t.teamCode)
+      );
+      // 실제 teamMembers 수로 memberCount 보정
       setMyTeams(
-        Array.from(allTeamCodes.values()).filter(
-          (t) => t.leaderId === user.id || memberTeamCodes.has(t.teamCode)
-        )
+        filteredTeams.map((t) => {
+          const actualCount = storage.getTeamMembers(t.teamCode).length;
+          return actualCount > 0 ? { ...t, memberCount: actualCount } : t;
+        })
       );
     }
   }, [id, user, ready]);
