@@ -31,7 +31,7 @@ export default function TeamRequestsPanel({ team, onClose, onTeamUpdated }: Prop
       title: status === 'accepted' ? '팀 합류 승인' : '팀 합류 거절',
       message:
         status === 'accepted'
-          ? `[${team.name}] 팀 합류 신청이 승인되었습니다! 🎉`
+          ? `[${team.name}] 팀 합류 신청이 승인되었습니다!`
           : `[${team.name}] 팀 합류 신청이 거절되었습니다.`,
       data: { teamCode: team.teamCode, teamName: team.name, hackathonSlug: team.hackathonSlug },
     });
@@ -41,8 +41,46 @@ export default function TeamRequestsPanel({ team, onClose, onTeamUpdated }: Prop
       prev.map((r) => (r.id === req.id ? { ...r, status } : r))
     );
 
-    // 수락 시 팀 멤버 수 갱신
+    // 수락 시 팀 멤버 추가 + 솔로 참여 → 팀 참여 전환
     if (status === 'accepted') {
+      storage.addTeamMember({
+        teamCode: team.teamCode,
+        userId: req.fromUserId,
+        nickname: req.fromUserNickname,
+        role: req.fromUserPositions[0] ?? 'Frontend',
+        joinedAt: new Date().toISOString(),
+        isLeader: false,
+      });
+
+      // 솔로 참여 이력이 있으면 팀 참여로 전환
+      if (team.hackathonSlug) {
+        storage.convertToTeamParticipation(
+          req.fromUserId,
+          team.hackathonSlug,
+          team.teamCode,
+          team.name
+        );
+
+        // 팀에 기존 참여 이력이 있으면 신규 멤버에게도 같은 참여 이력 부여
+        const teamParticipation = storage.getParticipations().find(
+          (p) => p.teamCode === team.teamCode && p.hackathonSlug === team.hackathonSlug
+        );
+        if (teamParticipation) {
+          const existingParticipation = storage.getUserParticipationForHackathon(
+            req.fromUserId,
+            team.hackathonSlug
+          );
+          if (!existingParticipation) {
+            storage.saveParticipation({
+              ...teamParticipation,
+              userId: req.fromUserId,
+              role: req.fromUserPositions[0] ?? 'Frontend',
+              joinedAt: new Date().toISOString(),
+            });
+          }
+        }
+      }
+
       const updated = storage.getTeams().find((t) => t.teamCode === team.teamCode);
       if (updated) {
         setCurrentTeam(updated);

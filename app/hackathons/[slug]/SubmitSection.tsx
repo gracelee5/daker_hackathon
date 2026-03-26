@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react';
 import { Upload, CheckCircle, ClipboardList, UserCheck } from 'lucide-react';
 import { storage } from '@/lib/storage';
+import { getPublicTeams } from '@/lib/data';
 import { useAuthStore } from '@/store/authStore';
-import { HackathonDetailSections } from '@/types';
+import { HackathonDetailSections, Team } from '@/types';
 import Card from '@/components/common/Card';
 import Button from '@/components/common/Button';
 
@@ -24,9 +25,36 @@ export default function SubmitSection({ slug, hackathonTitle, submit }: Props) {
   useEffect(() => {
     if (!user) return;
     const participations = storage.getParticipations();
-    const mine = participations.find((p) => p.hackathonSlug === slug);
-    setRegistered(!!mine);
-    setSubmitted(!!mine?.submitted);
+
+    // 1. 유저 직접 참여 이력 확인 (userId 기반)
+    const directParticipation = participations.find(
+      (p) => p.userId === user.id && p.hackathonSlug === slug
+    );
+
+    if (directParticipation) {
+      setRegistered(true);
+      setSubmitted(!!directParticipation.submitted);
+      return;
+    }
+
+    // 2. 팀 참여 이력 확인 (팀 멤버십 기반)
+    const allMembers = storage.getTeamMembers();
+    const myTeamCodes = allMembers
+      .filter((m) => m.userId === user.id)
+      .map((m) => m.teamCode);
+
+    const teamParticipation = participations.find(
+      (p) => p.hackathonSlug === slug && myTeamCodes.includes(p.teamCode)
+    );
+
+    if (teamParticipation) {
+      setRegistered(true);
+      setSubmitted(!!teamParticipation.submitted);
+      return;
+    }
+
+    setRegistered(false);
+    setSubmitted(false);
   }, [user, slug]);
 
   const items = submit.submissionItems ?? [
@@ -37,16 +65,44 @@ export default function SubmitSection({ slug, hackathonTitle, submit }: Props) {
 
   const handleRegister = () => {
     if (!user) return;
+
+    // 이 해커톤 관련 팀 멤버십 확인
+    const allMembers = storage.getTeamMembers();
+    const myMemberships = allMembers.filter((m) => m.userId === user.id);
+
+    // localStorage + public JSON 전체 팀 목록
+    const localTeams = storage.getTeams();
+    const publicTeams = getPublicTeams();
+    const allTeams: Team[] = [
+      ...localTeams,
+      ...publicTeams.filter((pt) => !localTeams.some((lt) => lt.teamCode === pt.teamCode)),
+    ];
+
+    // 현재 해커톤 소속 팀 찾기
+    let myTeam: Team | null = null;
+    let myRole: string = user.positions[0] || '';
+    for (const membership of myMemberships) {
+      const team = allTeams.find(
+        (t) => t.teamCode === membership.teamCode && t.hackathonSlug === slug
+      );
+      if (team) {
+        myTeam = team;
+        myRole = membership.role;
+        break;
+      }
+    }
+
     storage.saveParticipation({
       userId: user.id,
       hackathonSlug: slug,
       hackathonTitle,
-      teamCode: 'solo',
-      teamName: '개인 참여',
-      role: '',
+      teamCode: myTeam?.teamCode ?? 'solo',
+      teamName: myTeam?.name ?? '개인 참여',
+      role: myRole,
       status: 'ongoing',
       joinedAt: new Date().toISOString(),
     });
+
     addNotification({
       userId: user.id,
       type: 'hackathon_registered',
@@ -59,14 +115,31 @@ export default function SubmitSection({ slug, hackathonTitle, submit }: Props) {
 
   const handleSubmit = () => {
     if (!user) return;
-    const teams = storage.getTeams();
-    const myTeam = teams.find((t) => t.hackathonSlug === slug);
+
+    // 현재 참여 이력에서 팀 정보 조회
+    const participations = storage.getParticipations();
+    let myParticipation = participations.find(
+      (p) => p.userId === user.id && p.hackathonSlug === slug
+    );
+
+    if (!myParticipation) {
+      const allMembers = storage.getTeamMembers();
+      const myTeamCodes = allMembers
+        .filter((m) => m.userId === user.id)
+        .map((m) => m.teamCode);
+      myParticipation = participations.find(
+        (p) => p.hackathonSlug === slug && myTeamCodes.includes(p.teamCode)
+      );
+    }
+
+    const teamCode = myParticipation?.teamCode ?? 'solo';
+    const teamName = myParticipation?.teamName ?? '개인 참여';
     const now = new Date().toISOString();
 
     storage.saveSubmission({
       id: `${slug}-${Date.now()}`,
       hackathonSlug: slug,
-      teamCode: myTeam?.teamCode ?? 'solo',
+      teamCode,
       submittedAt: now,
       artifacts: {
         plan: values['plan'],
@@ -75,21 +148,55 @@ export default function SubmitSection({ slug, hackathonTitle, submit }: Props) {
         zipUrl: values['zip'] || fileNames['zip'],
       },
     });
-    storage.markParticipationSubmitted(slug);
 
-    // 증명서 자동 발급
-    const members = storage.getTeamMembers(myTeam?.teamCode ?? '');
-    const myMember = members.find((m) => m.userId === user.id);
-    const role = myMember?.role || user.positions[0] || 'Participant';
-    storage.saveCertificate({
-      id: `cert-${slug}-${user.id}`,
-      userId: user.id,
-      hackathonSlug: slug,
-      hackathonTitle,
-      teamName: myTeam?.name ?? '개인 참여',
-      role,
-      issuedAt: now,
-    });
+    // 팀 참여인 경우 팀 전체 제출 완료 처리, 솔로인 경우 개인만
+    if (teamCode !== 'solo') {
+      storage.markTeamParticipationSubmitted(slug, teamCode);
+    } else {
+      storage.markSoloParticipationSubmitted(user.id, slug);
+    }
+
+    // 팀원 전체 증명서 발급
+    const teamMembers = storage.getTeamMembers(teamCode);
+
+    if (teamMembers.length > 0) {
+      // 팀 참여 - 모든 팀원에게 증명서 발급
+      teamMembers.forEach((member) => {
+        storage.saveCertificate({
+          id: `cert-${slug}-${member.userId}`,
+          userId: member.userId,
+          hackathonSlug: slug,
+          hackathonTitle,
+          teamName,
+          role: member.role,
+          issuedAt: now,
+        });
+
+        // 제출자 외 다른 팀원에게 알림
+        if (member.userId !== user.id) {
+          storage.addNotification({
+            userId: member.userId,
+            type: 'submission_complete',
+            title: '팀 제출 완료 · 증명서 발급',
+            message: `${hackathonTitle} 해커톤이 팀원에 의해 제출되었습니다! 경험 증명서가 발급되었습니다.`,
+            data: { hackathonSlug: slug, hackathonTitle },
+          });
+        }
+      });
+    } else {
+      // 솔로 참여
+      const myMember = storage.getTeamMembers(teamCode).find((m) => m.userId === user.id);
+      const role = myMember?.role || user.positions[0] || 'Participant';
+      storage.saveCertificate({
+        id: `cert-${slug}-${user.id}`,
+        userId: user.id,
+        hackathonSlug: slug,
+        hackathonTitle,
+        teamName,
+        role,
+        issuedAt: now,
+      });
+    }
 
     addNotification({
       userId: user.id,
@@ -159,7 +266,7 @@ export default function SubmitSection({ slug, hackathonTitle, submit }: Props) {
                 {isFileFormat(item.format) ? (
                   <input
                     type="file"
-                    accept={item.format === 'pdf' ? '.pdf' : '.zip,.tar.gz'}
+                    accept={item.format === 'pdf' ? '.pdf' : '.zip'}
                     onChange={(e) => {
                       const file = e.target.files?.[0];
                       setFileNames((prev) => ({ ...prev, [item.key]: file?.name ?? '' }));

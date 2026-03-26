@@ -209,6 +209,44 @@ export const storage = {
     }
   },
 
+  // 유저의 특정 해커톤 참여 이력 조회 (userId 기반)
+  getUserParticipationForHackathon: (userId: string, hackathonSlug: string): HackathonParticipation | undefined =>
+    storage.getParticipations().find((p) => p.userId === userId && p.hackathonSlug === hackathonSlug),
+
+  // 팀 합류 시 솔로 참여를 팀 참여로 전환
+  convertToTeamParticipation: (userId: string, hackathonSlug: string, teamCode: string, teamName: string): void => {
+    const list = storage.getParticipations();
+    const idx = list.findIndex((p) => p.userId === userId && p.hackathonSlug === hackathonSlug && p.teamCode === 'solo');
+    if (idx >= 0) {
+      list[idx] = { ...list[idx], teamCode, teamName };
+      setItem('syncup:participations', list);
+    }
+  },
+
+  // 팀 전체 제출 완료 처리 (같은 teamCode를 가진 모든 참여 이력 업데이트)
+  markTeamParticipationSubmitted: (hackathonSlug: string, teamCode: string): void => {
+    const list = storage.getParticipations();
+    const now = new Date().toISOString();
+    let changed = false;
+    list.forEach((p, idx) => {
+      if (p.hackathonSlug === hackathonSlug && p.teamCode === teamCode) {
+        list[idx] = { ...p, submitted: true, submittedAt: now };
+        changed = true;
+      }
+    });
+    if (changed) setItem('syncup:participations', list);
+  },
+
+  // 개인(솔로) 제출 완료 처리
+  markSoloParticipationSubmitted: (userId: string, hackathonSlug: string): void => {
+    const list = storage.getParticipations();
+    const idx = list.findIndex((p) => p.userId === userId && p.hackathonSlug === hackathonSlug);
+    if (idx >= 0) {
+      list[idx] = { ...list[idx], submitted: true, submittedAt: new Date().toISOString() };
+      setItem('syncup:participations', list);
+    }
+  },
+
   // ─── 팀 멤버 ──────────────────────────────────────────────────────────────
   getTeamMembers: (teamCode?: string): TeamMember[] => {
     const all = getItem('syncup:teamMembers') ?? [];

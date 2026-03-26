@@ -11,7 +11,7 @@ import {
 import { storage } from '@/lib/storage';
 import { useAuthStore } from '@/store/authStore';
 import { getPublicTeams, getHackathonBySlug } from '@/lib/data';
-import { Team, TeamMember, ChatMessage, TeamJoinRequest } from '@/types';
+import { Team, TeamMember, ChatMessage, TeamJoinRequest, HackathonParticipation } from '@/types';
 import Card from '@/components/common/Card';
 import Badge from '@/components/common/Badge';
 import Button from '@/components/common/Button';
@@ -31,6 +31,7 @@ export default function TeamDetailPage({ params }: Props) {
   const [memberBios, setMemberBios] = useState<Record<string, string>>({});
   const [chats, setChats] = useState<ChatMessage[]>([]);
   const [pendingRequests, setPendingRequests] = useState<TeamJoinRequest[]>([]);
+  const [participation, setParticipation] = useState<HackathonParticipation | null>(null);
   const [chatInput, setChatInput] = useState('');
   const [loading, setLoading] = useState(true);
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -56,6 +57,13 @@ export default function TeamDetailPage({ params }: Props) {
       setMemberBios(bios);
       setChats(storage.getChats(teamCode));
       setPendingRequests(storage.getJoinRequestsForTeam(teamCode).filter((r) => r.status === 'pending'));
+
+      // 팀 참여 이력 확인
+      const parts = storage.getParticipations();
+      const teamPart = parts.find(
+        (p) => p.teamCode === teamCode && p.hackathonSlug === found.hackathonSlug
+      ) ?? null;
+      setParticipation(teamPart);
     }
     setLoading(false);
   }, [teamCode]);
@@ -120,6 +128,36 @@ export default function TeamDetailPage({ params }: Props) {
     storage.addTeamMember(newMember);
     setMembers((prev) => [...prev, newMember]);
     setPendingRequests((prev) => prev.filter((r) => r.id !== req.id));
+
+    // 솔로 참여 → 팀 참여 전환
+    if (team.hackathonSlug) {
+      storage.convertToTeamParticipation(
+        req.fromUserId,
+        team.hackathonSlug,
+        teamCode,
+        team.name
+      );
+
+      // 팀에 기존 참여 이력이 있으면 신규 멤버에게도 참여 이력 부여
+      const teamParticipation = storage.getParticipations().find(
+        (p) => p.teamCode === teamCode && p.hackathonSlug === team.hackathonSlug
+      );
+      if (teamParticipation) {
+        const existingParticipation = storage.getUserParticipationForHackathon(
+          req.fromUserId,
+          team.hackathonSlug
+        );
+        if (!existingParticipation) {
+          storage.saveParticipation({
+            ...teamParticipation,
+            userId: req.fromUserId,
+            role: req.fromUserPositions[0] ?? 'Frontend',
+            joinedAt: new Date().toISOString(),
+          });
+        }
+      }
+    }
+
     addNotification({
       userId: req.fromUserId,
       type: 'request_accepted',
@@ -196,6 +234,24 @@ export default function TeamDetailPage({ params }: Props) {
                 </span>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* 해커톤 참여 상태 */}
+        {participation && (
+          <div className="mt-4 pt-4 border-t border-gray-100 flex items-center gap-2">
+            <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
+              participation.submitted
+                ? 'bg-emerald-100 text-emerald-700'
+                : 'bg-violet-50 text-violet-700'
+            }`}>
+              {participation.submitted ? '제출 완료' : '해커톤 참여 중'}
+            </span>
+            {participation.submittedAt && (
+              <span className="text-xs text-gray-400">
+                {new Date(participation.submittedAt).toLocaleDateString('ko-KR')} 제출
+              </span>
+            )}
           </div>
         )}
 

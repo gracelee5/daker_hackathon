@@ -59,7 +59,6 @@ export default async function HackathonDetailPage({ params }: Props) {
           </div>
           <p className="text-gray-700 text-sm leading-relaxed mb-4">{sections.overview.summary}</p>
           <div className="flex gap-4 text-sm text-gray-600">
-            <span>솔로 참가: {sections.overview.teamPolicy.allowSolo ? '가능' : '불가'}</span>
             <span>최대 팀원: {sections.overview.teamPolicy.maxTeamSize}명</span>
           </div>
         </Card>
